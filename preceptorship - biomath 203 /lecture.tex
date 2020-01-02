@@ -62,7 +62,7 @@ Solving $\bA \bx = \bb$ (review):
 		\end{itemize}
 \end{enumerate}
 
-\subsection{Large, sparse problems}
+\subsection{Large, sparse problems are usually solved by iterative methods}
 
 Large problems means one cannot load $\bA$ into RAM. If $\bA \in \R^{n \times n}$ is sparse, then memory demand may still be low (see homework). In this situation, we use:
 
@@ -72,17 +72,19 @@ Large problems means one cannot load $\bA$ into RAM. If $\bA \in \R^{n \times n}
 	\item https://juliamath.github.io/IterativeSolvers.jl/dev/
 \end{itemize}
 
-Why don't we use Cholesky/QR/LU...etc? If $\bA$ is banded, we can preserve sparsity. However, $\bL, \bU, \bQ, \bR$ is generally not sparse when $\bA$ is sparse. e.g. consider $\bA$ with 1's along first row and column, and along the diagonal. 
-
-\section{Large, dense problems}
-
-When $\bA$ is dense and large, we cannot load the matrix into memory and computation seems hopeless. We need specialized algorithms for $\bA \bx = \bb$. We cover 3 main ones:
+Why don't we use Cholesky/QR/LU...etc? If $\bA$ is banded, we can preserve sparsity. However, $\bL, \bU, \bQ, \bR$ is generally not sparse when $\bA$ is sparse. e.g. consider $\bA$ with 1's along first row and column, and along the diagonal. \\
+\\
+For large and dense problems, recent literature focuses on \textit{randomized} algorithms. We cover 3 main ones:
 \begin{itemize}
 	\item Stochastic gradient descent
 	\item Randomized Kaczmarz (overdetermined systems, perhaps sparsity is needed to be superior to conjugate gradient)
 	\item Randomized Gauss-Siedel
 	\item Randomized MM algorithm?
 \end{itemize}
+
+\section{Stochastic gradient descent for large, dense problems}
+
+When $\bA$ is dense and large, we cannot load the matrix into memory and computation seems hopeless. 
 
 Since $\bA$ may not be square, an exact solution may not exist or be unique. One must first define what is meant by a solution. 
 \begin{definition}
@@ -92,15 +94,13 @@ $\bx^*$ is the solution to $\bA \bx = \bb$ if
 \end{align*}
 \end{definition}
 
-\subsection{Stochastic Gradient descent}
-
-\subsubsection{Geometric intuition of gradient descent}
+\subsection{Geometric intuition of gradient descent}
 
 \begin{center}
 	\includegraphics[scale=0.1]{gradient_illustration.jpg}
 \end{center}
 
-\subsubsection{Why does gradient methods work, mathematically?}
+\subsection{Why does gradient methods work, mathematically?}
 
 We want to solve $\bA\bx = \bb \iff \bx$ minimizes $f(\bx) = \frac{1}{2}||\bA\bx - \bb||^2_2 + \lambda||\bx||_2$. Gradient methods achieve this via iterations:
 \begin{align}\label{gradient_method_works}
@@ -115,7 +115,7 @@ where $s_k$ is a positive step size.
 	\begin{align*}
 		f(\bx_{k + 1}) 
 		&= f(\bx_k - s_k\nabla f(\bx_k)) \\
-		&= f(\bx_k) - s_k\nabla f(\bx_k)^t(-s_k \nabla f(\bx_k)) + O(s_k^2)\\
+		&= f(\bx_k) - s_k\nabla f(\bx_k)^t\nabla f(\bx_k) + O(s_k^2)\\
 		&= f(\bx_k) - s_k ||\nabla f(\bx_k)||_2^2 + O(s_k^2)\\
 		&\le f(\bx_k).
 	\end{align*}
@@ -127,10 +127,19 @@ Here the second equality is by Taylor series and the last line is because $s_k >
 	\item Why does gradient methods work? (theorem showing each iteration decreases error)
 	\item Explain savings in memory
 	\item Idea behind SGD is how it agrees with GD \textit{in expectation}. (last part of proof requires some notation: see homework) Variance does not decrease but we don't care about that. Show example of SGD with missing data Needell's paper
+	\item Convergence? Rate of convergence?
 	\item Discuss parallel computing -> recall Hogwild paper claims that lockings not required if matrix is sparse (i.e. race condition is rare). 
 \end{itemize}
 
+\section{Kaczmarz and Randomized Kaczmarz method for overdetermined systems}
 
+\begin{itemize}
+	\item Krylov subspace methods
+	\item Iteration scheme and geometric intuition
+	\item Exponential convergence rate
+	\item Does not converge to OLS solution for inconsistent systems.
+	\item RK is special case of SGD with reweighted importance sampling
+\end{itemize}
 
 \section{Problems}
 In honor of Ken Lange, you are required to do 2 problems. If you do more I will grade your top 2 problems. Every problem is worth the same number of points. If a problem has subproblems, each subproblem is worth the same number of points.
