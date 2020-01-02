@@ -7,7 +7,7 @@
 
 \textbf{Problem statement:} Given matrix $\bA$ and vector $\bb$, find vector $\bx$ such that $\bA \bx = \bb$.
 
-\section{Review: when to use BLAS}
+\section{Review}
 
 \noindent Some motivating examples:
 
@@ -32,16 +32,39 @@
 	\item Large, dense problems requires \textit{randomized} iterative methods. 
 \end{itemize}
 
-\subsection{Dense, small problems QR/LU/Cholesky factorizations}
+\subsection{Direct methods for dense, small problems}
 
-Consider a $n \times p$ matrix $\bA$ that is small and dense. Then the following factorization algorithms can be used to solve $\bA \bx = \bb$:
+Solving $\bA \bx = \bb$ (review):
 
-\textbf{When to use QR/LU/Cholesky:}\\
-https://stackoverflow.com/questions/20181940/most-efficient-way-to-solve-a-system-of-linear-equations
+\begin{enumerate}
+	\item Factorize: 
+		\begin{itemize}
+			\item $\bL\bU: \bA = \bL\bU, \bL =$ lower triangular matrix and $\bU =$ upper triangular
+			\item $\bQ\bR: \bA = \bQ\bR, \bQ\bQ^t = \bI$ and $\bR =$ upper triangular. 
+			\item Cholesky: $\bA = \bL\bL^t, \bL =$ lower triangular matrix.
+		\end{itemize}
+	\item Solving:
+		\begin{itemize}
+			\item $\bL\bU: \bA = \bL\bU \iff \bL(\bU\bx) = \bb \iff \bU\bx = \by$ and $\bL\by = \bb$.
+			\item $\bQ\bR: \bA = \bQ\bR \iff \bQ\bR\bx = \bb \iff \bR\bx = \bQ^t\bb$
+			\item Cholesky: $\bA = \bL\bL^t \iff \bL\bL^t\bx = \bb \iff \bL^t\bx = \by$ and $\bL\by = \bb$. 
+		\end{itemize}
+	\item Remarks:
+		\begin{itemize}
+			\item Last step in (2) uses backward substitution due to triangular structure. 
+			\item For non-square matrices, step (1) uses QR (in general).
+			\item For square matrices, 
+				\begin{itemize}
+					\item If $\bA$ is positive definite, step (1) use Cholesky.
+					\item Otherwise, step (1) uses LU. 
+				\end{itemize}
+			\item Other methods (e.g. householder, modified Gram Schmidt, SVD, sweep) may be useful in certain cases. 
+		\end{itemize}
+\end{enumerate}
 
 \subsection{Large, sparse problems}
 
-If $\bA \in \R^{n \times n}$ has some special structures, such as sparsity, then clever software engineering may circumvent the memory problem (see homework).
+Large problems means one cannot load $\bA$ into RAM. If $\bA \in \R^{n \times n}$ is sparse, then memory demand may still be low (see homework). In this situation, we use:
 
 \begin{itemize}
 	\item Conjugate gradient (sparse, symmetric, positive definite)
@@ -49,7 +72,9 @@ If $\bA \in \R^{n \times n}$ has some special structures, such as sparsity, then
 	\item https://juliamath.github.io/IterativeSolvers.jl/dev/
 \end{itemize}
 
-\section{Large, dense problems (when BLAS fails...)}
+Why don't we use Cholesky/QR/LU...etc? If $\bA$ is banded, we can preserve sparsity. However, $\bL, \bU, \bQ, \bR$ is generally not sparse when $\bA$ is sparse. e.g. consider $\bA$ with 1's along first row and column, and along the diagonal. 
+
+\section{Large, dense problems}
 
 When $\bA$ is dense and large, we cannot load the matrix into memory and computation seems hopeless. We need specialized algorithms for $\bA \bx = \bb$. We cover 3 main ones:
 \begin{itemize}
@@ -59,7 +84,43 @@ When $\bA$ is dense and large, we cannot load the matrix into memory and computa
 	\item Randomized MM algorithm?
 \end{itemize}
 
-\subsection{(Full vs Stochastic) Gradient descent}
+Since $\bA$ may not be square, an exact solution may not exist or be unique. One must first define what is meant by a solution. 
+\begin{definition}
+$\bx^*$ is the solution to $\bA \bx = \bb$ if 
+\begin{align*}
+	\bx^* = \argmin_{\bx \in \R^n} ||\bA\bx - \bb||
+\end{align*}
+\end{definition}
+
+\subsection{Stochastic Gradient descent}
+
+\subsubsection{Geometric intuition of gradient descent}
+
+\begin{center}
+	\includegraphics[scale=0.1]{gradient_illustration.jpg}
+\end{center}
+
+\subsubsection{Why does gradient methods work, mathematically?}
+
+We want to solve $\bA\bx = \bb \iff \bx$ minimizes $f(\bx) = \frac{1}{2}||\bA\bx - \bb||^2_2 + \lambda||\bx||_2$. Gradient methods achieve this via iterations:
+\begin{align}\label{gradient_method_works}
+	\bx_{k + 1} = \bx_k - s_k \nabla f(\bx_k),
+\end{align}
+where $s_k$ is a positive step size. 
+
+\begin{theorem}
+	The iteration defined by $\bx_{k + 1} = \bx_k - s_k \nabla f(\bx_k)$ satisfies $f(x_{k + 1}) \le f(x_k)$. 
+\end{theorem}
+\begin{proof}
+	\begin{align*}
+		f(\bx_{k + 1}) 
+		&= f(\bx_k - s_k\nabla f(\bx_k)) \\
+		&= f(\bx_k) - s_k\nabla f(\bx_k)^t(-s_k \nabla f(\bx_k)) + O(s_k^2)\\
+		&= f(\bx_k) - s_k ||\nabla f(\bx_k)||_2^2 + O(s_k^2)\\
+		&\le f(\bx_k).
+	\end{align*}
+Here the second equality is by Taylor series and the last line is because $s_k > 0$. 
+\end{proof}
 
 \begin{itemize}
 	\item Geometric intuition of gradient descent. Note that $\nabla \frac{1}{2}||\bA\bx - \bb||_2^2 = \bA^t(\bA^t\bx - \bb)$ (see homework).
