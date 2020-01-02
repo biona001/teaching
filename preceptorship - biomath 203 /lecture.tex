@@ -1,0 +1,127 @@
+\documentclass[./some_latex_template.tex]{subfiles}
+\begin{document}
+
+\title{Randomized Algorithms for $\bA\bx = \bb$}
+\author{Benjamin Chu}
+\maketitle
+
+\textbf{Problem statement:} Given matrix $\bA$ and vector $\bb$, find vector $\bx$ such that $\bA \bx = \bb$.
+
+\section{Review: when to use BLAS}
+
+\noindent Some motivating examples:
+
+\begin{itemize}
+	\item Least squares seek the solution to $\bX^t\bX \bbeta = \bX^t \by$. 
+	\item PDE solvers and finite element methods
+	\item Total variation (imaging)
+\end{itemize}
+
+\noindent Notable computational challenges
+
+\begin{itemize}
+	\item $\bA$ may be large: a dense $10^6 \times 10^6$ float64 matrix is 6 terabytes
+	\item $\bA$ may be fat\&short or tall\&skinny, so $\bx$ may not be unique or even exist (i.e. need approximations). 
+\end{itemize}
+
+\noindent Messages:
+ 
+\begin{itemize}
+	\item Never do $\bx = \bA^{-1}\bb$ for any real problem.
+	\item Take advantage of $\bA$'s special structure. (e.g. sparse, sparse + rank 1 update, triangular...etc). Learn everything about numerical linear algebra in Dr. Hua Zhou's class -  biostats M280. Biomath 205 and Math 270c may be good to learn theories. 
+	\item Large, dense problems requires \textit{randomized} iterative methods. 
+\end{itemize}
+
+\subsection{Dense, small problems QR/LU/Cholesky factorizations}
+
+Consider a $n \times p$ matrix $\bA$ that is small and dense. Then the following factorization algorithms can be used to solve $\bA \bx = \bb$:
+
+\textbf{When to use QR/LU/Cholesky:}\\
+https://stackoverflow.com/questions/20181940/most-efficient-way-to-solve-a-system-of-linear-equations
+
+\subsection{Large, sparse problems}
+
+If $\bA \in \R^{n \times n}$ has some special structures, such as sparsity, then clever software engineering may circumvent the memory problem (see homework).
+
+\begin{itemize}
+	\item Conjugate gradient (sparse, symmetric, positive definite)
+	\item GMRES (requires good preconditioner)
+	\item https://juliamath.github.io/IterativeSolvers.jl/dev/
+\end{itemize}
+
+\section{Large, dense problems (when BLAS fails...)}
+
+When $\bA$ is dense and large, we cannot load the matrix into memory and computation seems hopeless. We need specialized algorithms for $\bA \bx = \bb$. We cover 3 main ones:
+\begin{itemize}
+	\item Stochastic gradient descent
+	\item Randomized Kaczmarz (overdetermined systems, perhaps sparsity is needed to be superior to conjugate gradient)
+	\item Randomized Gauss-Siedel
+	\item Randomized MM algorithm?
+\end{itemize}
+
+\subsection{(Full vs Stochastic) Gradient descent}
+
+\begin{itemize}
+	\item Geometric intuition of gradient descent. Note that $\nabla \frac{1}{2}||\bA\bx - \bb||_2^2 = \bA^t(\bA^t\bx - \bb)$ (see homework).
+	\item Why does gradient methods work? (theorem showing each iteration decreases error)
+	\item Explain savings in memory
+	\item Idea behind SGD is how it agrees with GD \textit{in expectation}. (last part of proof requires some notation: see homework) Variance does not decrease but we don't care about that. Show example of SGD with missing data Needell's paper
+	\item Discuss parallel computing -> recall Hogwild paper claims that lockings not required if matrix is sparse (i.e. race condition is rare). 
+\end{itemize}
+
+
+
+\section{Problems}
+In honor of Ken Lange, you are required to do 2 problems. If you do more I will grade your top 2 problems. Every problem is worth the same number of points. If a problem has subproblems, each subproblem is worth the same number of points.
+
+\begin{problembox}{{BLAS is better than you}}{}
+Consider the problem of dense matrix-vector multiplication. 
+\begin{enumerate}
+	\item Write your own matrix-vector multiplication routine in Julia.
+	\item Compare your code's speed (consider using \texttt{BenchmarkTools.jl}) to BLAS routines on $\bX \in \R^{n \times n}$ matrices where $n = 100, 1000$, and $10000$. Which is faster?
+	\item \textit{Parallelize} your code using Julia's built-in multithreading (suitable for single machine parallel code) or \texttt{Distributed.jl} package (suitable for multi-core distributed computing), then perform the comparison. What is the speedup in your code? Did you have to use additional memory? How close are you to beating BLAS?
+\end{enumerate}
+\end{problembox}
+
+\begin{problembox}{Sparse matrices is somtimes better than BLAS}{}
+Consider the problem of dense matrix-vector and matrix-matrix multiplication when the matrices involved is potentially sparse. 
+\begin{enumerate}
+	\item Suppose $\bX \in \R^{n \times n}$ where $n = 10^6$. How much RAM  memory is required (in gigabytes) to store a dense matrix in double precision (i.e. Float64)? In single precision (Float32)? Half precision (Float16)? You will need at least this much RAM in order to create a matrix of this size. 
+	\item If $n = 10^6$ and only $1\%$ of the entries are non-zero, how much memory do you need to store a sparse double precision matrix? Create such a matrix with Julia's \texttt{SparseArrays.jl} and verify your guess with Julia's \texttt{sizeof()} command. 
+	\item Using functions associated with Julia's \texttt{SparseArrays.jl}, generate \textit{sparse} matrices with sizes $n = 10^4, 10^5, 10^6$ and with sparsity level $0.001, 0.01, 0.1$. Convert these matrices to \textit{dense} matrices (hint: is this possible?), and compare the speed of a (sparse) matrix-vector and matrix-matrix multiplication to a (dense) matrix-vector and matrix-matrix multiplication. Why is BLAS slower in some cases but not others? Use dense vectors for the matrix-vector multiplication. 
+\end{enumerate}
+\end{problembox}
+
+\begin{problembox}{Exact 2nd order Taylor's expansion}{}
+Suppose $f$ is continuous and twice differentiable. Show that there exists $y \in (x_0, x)$ such that:
+\begin{align*}
+f(x) = f(x_0) + f'(x_0)(x - x_0) + \frac{1}{2} f''(y)(x - x_0)^2.
+\end{align*}
+This fact is used (in chapter 9.2, without proof) to motivate the quadratic upper bound principle used ubiquitously in MM algorithms. 
+\end{problembox}
+
+\begin{problembox}{Notation problem}{}
+Let $\bX \in \R^{n \times p}$, $\lambda_i \in \R$, and $\bx_i^T \in \R^{1 \times p}$ be row $i$ of $\bX$. Show that
+\begin{align*}
+	\sum_{i=1}^n \lambda_i \bx_i\bx_i^T = \bX^T
+	\begin{bmatrix}
+		\lambda_1 & & \bzero \\
+		& \ddots & \\
+		\bzero & & \lambda_n
+	\end{bmatrix} \bX
+\end{align*}
+This is standard notation (e.g. used in section 3.4 of \cite{dobson2008introduction}), and in my proof that SGD agrees with GD in expectation. 
+\end{problembox}
+
+\begin{problembox}{L2 norm enjoys nice quadratic behavior}{}
+Let $\bA \in \R^{n \times p}, \bx \in \R^{p}$ and $\bb \in \R^n$.
+\begin{enumerate}
+	\item Compute the gradient of $F(\bx) = \frac{1}{2}||\bA\bx - \bb||^2_2$.
+	\item Compute the gradient of $f_i(\bx) = \frac{1}{2} (\bA_i^t \bx - \bb_i)^2$ where $\bA_i^t \in \R^{1 \times p}$ is row $i$ of $\bA$. 
+\end{enumerate}
+\end{problembox}
+
+\bibliographystyle{apalike}
+\bibliography{references}
+
+\end{document}
