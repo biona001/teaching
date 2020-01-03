@@ -134,6 +134,34 @@ Here the second equality is by Taylor series and the last line is because $s_k >
 	\item Discuss parallel computing -> recall Hogwild paper claims that lockings not required if matrix is sparse (i.e. race condition is rare). 
 \end{itemize}
 
+\subsection{Choosing appropriate functionals and probability distributions to approximate gradient}
+
+\textbf{Idea:} Stochastic gradient descent approximates full gradient by subsets of the design matrix. \\
+\\
+Problem setup:
+\begin{itemize}
+	\item Let $\bA \in \R^{n \times p}$ and let $\bA_i^t$ be the rows of $\bA$.
+	\item Define $F(\bx) = \frac{1}{2}||\bA\bx - \bb||_2^2$
+	\item Note $\nabla F(\bx) = \bA^t(\bA\bx - \bb)$ (homework)
+\end{itemize}
+
+\begin{theorembox}{}{}
+Let $p$ be a discrete uniform probability distribution on the rows of $\bA$ (i.e. $p_i = \frac{1}{n}$ for all $i$) and define the partial gradients as $f_i(\bx) = \frac{1}{2}(\bA_i \bx = b_i)^2$. Then 
+\begin{align*}
+	F(\bx) = \mathbb{E} f_i(\bx)
+\end{align*}
+\end{theorembox}
+
+\begin{proof}
+\begin{align*}
+	\mathbb{E} f_i(x) 
+	&= \int f_i(x) p_i = \sum_{i=1}^m p_i f_i(x) = \sum_{i=1}^m p_i\left[ \frac{1}{2}  (A_i x - b_i)^2 \right]\\
+	&= \sum_{i=1}^{m} \frac{1}{2m} (A_ix - b_i)^t (A_ix - b_i)\\
+	&\eqstar F(x).
+\end{align*}
+$\star$ is left as homework. 
+\end{proof}
+
 \section{Kaczmarz and Randomized Kaczmarz method for overdetermined systems}
 
 \begin{itemize}
