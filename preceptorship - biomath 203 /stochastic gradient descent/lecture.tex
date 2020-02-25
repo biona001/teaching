@@ -93,9 +93,17 @@ $\bx^*$ is the solution to $\bA \bx = \bb$ if $\bx^* = \argmin_{\bx \in \R^n} ||
 	\item Randomized Gauss-Siedel, Randomized MM algorithm? 
 \end{itemize}
 
-\section{Stochastic gradient descent for large, dense problems}
+\section{Stochastic gradient descent (SGD) for large, dense problems}
 
-When $\bA$ is dense and large, we cannot load the matrix into memory. Therefore the idea is to approximate the gradient with a subset of $\bA$. For SGD, this subset is a single row of $\bA$, denoted by $\bA_i^t$. We first begin with intuition behind gradient descent. 
+When $\bA \in \R^{n \times p}$ is dense and large, we cannot load the matrix into memory. Stochastic gradient descent is mainly motivated by the desire of cheaper gradient steps involving just a subset of the data small enough that fits into memory. The objective function $f(\bx) = ||\bA\bx - \bb||^2_2$ in gradient descent is equivalent as sums of subfunctions $\sum_{i = 1}^p f_i(\bx) = \sum_{i = 1}^p ||\bA_i^t\bx - b_i||$ evaluated at different rows of $\bA$, denoted by $\bA_i^t$. The objective function in SGD is \textit{stochastic} in that each iteration we optimize a random subfunction $f_i(\bx)$ in the hope that it will eventually minimize the full objective function $f(\bx)$ after enough iterations. \\
+\\
+\textbf{Assumptions}
+\begin{enumerate}
+	\item Objective function is differentiable w.r.t all of its parameters.  
+	\item Strongly convex objective: $\left< \bx - \by, \nabla F(\bx) - \nabla F(\by) \right> \ge \mu ||\bx - \by||^2_2$
+	\item Smoothness
+	\item Finite variance?
+\end{enumerate}
 
 \subsection{Geometric intuition of gradient descent}
 
@@ -103,7 +111,9 @@ When $\bA$ is dense and large, we cannot load the matrix into memory. Therefore 
 	\includegraphics[scale=0.1]{gradient_illustration.jpg}
 \end{center}
 
-\subsection{Why does gradient methods work, mathematically?}
+Perhaps discuss how gradient based methods are more popular than newton-like methods due to high dimensional datasets. 
+
+\subsection{Why does gradient methods work?}
 
 We want to solve $\bA\bx = \bb \iff \bx$ minimizes $f(\bx) = \frac{1}{2}||\bA\bx - \bb||^2_2 + \lambda||\bx||_2$. Gradient methods achieve this via iterations:
 \begin{align}\label{gradient_method_works}
@@ -122,7 +132,8 @@ The iteration defined by $\bx_{k + 1} = \bx_k - s_k \nabla f(\bx_k)$ satisfies $
 		&= f(\bx_k) - s_k ||\nabla f(\bx_k)||_2^2 + O(s_k^2)\\
 		&\le f(\bx_k).
 	\end{align*}
-Here the second equality is by Taylor series and the last line is because $s_k > 0$. 
+Here the second equality is by Taylor series and the last line is because $s_k > 0$. In practice, we can choose $s_k = 1$ and perform line search if objective increases. This is possible because error is guaranteed to decrease in each iteration.  
+
 \end{proof}
 
 \begin{itemize}
@@ -134,30 +145,27 @@ Here the second equality is by Taylor series and the last line is because $s_k >
 	\item Discuss parallel computing -> recall Hogwild paper claims that lockings not required if matrix is sparse (i.e. race condition is rare). 
 \end{itemize}
 
-\subsection{Choosing appropriate functionals and probability distributions to approximate gradient}
+\subsection{Choosing appropriate functionals and probability distributions}
 
-\textbf{Idea:} Stochastic gradient descent approximates full gradient by subsets of the design matrix. \\
+\textbf{Idea:} Stochastic gradient descent has a random objective function that is cheap to optimize. \\
 \\
-Problem setup:
+\textbf{Notations:}
 \begin{itemize}
-	\item Let $\bA \in \R^{n \times p}$ and let $\bA_i^t$ be the rows of $\bA$.
-	\item Define $F(\bx) = \frac{1}{2}||\bA\bx - \bb||_2^2$
-	\item Note $\nabla F(\bx) = \bA^t(\bA\bx - \bb)$ (homework)
+	\item Let $\bA \in \R^{n \times p}$ and let $\bA_i^t$ be row $i$ of $\bA$.
+	\item Define $f(\bx) = \frac{1}{2}||\bA\bx - \bb||_2^2 = \sum_i f_i (\bx) = \frac{1}{2}||\bA_i^t\bx - b_i||_2^2$
+	\item Note $\nabla f(\bx) = \bA^t(\bA\bx - \bb)$ (homework)
 \end{itemize}
 
 \begin{theorembox}{}{}
-Let $p$ be a discrete uniform probability distribution on the rows of $\bA$ (i.e. $p_i = \frac{1}{n}$ for all $i$) and define the partial gradients as $f_i(\bx) = \frac{1}{2}(\bA_i \bx = b_i)^2$. Then 
+Let $p$ be a discrete uniform probability distribution on the rows of $\bA \in \R^{n \times p}$ (i.e. $p_i = \frac{1}{n}$ for all $i$) and define the partial gradients as $f_i(\bx) = \frac{1}{2}(\bA_i \bx = b_i)^2$. Then 
 \begin{align*}
-	F(\bx) = \mathbb{E} f_i(\bx)
+	f(\bx) = \mathbb{E} f_i(\bx)
 \end{align*}
 \end{theorembox}
 
 \begin{proof}
 \begin{align*}
-	\mathbb{E} f_i(x) 
-	&= \int f_i(x) p_i = \sum_{i=1}^m p_i f_i(x) = \sum_{i=1}^m p_i\left[ \frac{1}{2}  (A_i x - b_i)^2 \right]\\
-	&= \sum_{i=1}^{m} \frac{1}{2m} (A_ix - b_i)^t (A_ix - b_i)\\
-	&\eqstar F(x).
+	\mathbb{E} f_i(\bx) = \int f_i(\bx) p_i = \sum_{i=1}^m p_i f_i(\bx) = \sum_{i=1}^m \left[ \frac{1}{2m}  (\bA_i \bx - b_i)^2 \right] =  f(\bx).
 \end{align*}
 $\star$ is left as homework. 
 \end{proof}

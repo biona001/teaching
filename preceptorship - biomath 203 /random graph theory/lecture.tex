@@ -1,0 +1,41 @@
+\documentclass[./some_latex_template.tex]{subfiles}
+\begin{document}
+
+\title{Random Graph theory}
+\author{Benjamin Chu}
+\maketitle
+
+Most materials from this note is taken from \cite{Acemoglu, Ramchandran}
+
+\section{Erdos-Renyi Graph Model}
+
+\begin{itemize}
+	\item We use $G(n, p)$ to denote an undirected (Erdos-Renyi) graph with $n$ nodes.
+	\item An edge is formed between 2 nodes with probability $p \in (0, 1)$ \textbf{independently} of other edges. 
+	\item A graph is \textbf{connected} when there is a path between every pair of vertices. 
+\end{itemize}
+
+\noindent When $p = p(n)$ is a function of $n$, we may be interested in the behavior of $G(n, p(n))$ as $n \rightarrow \infty$. 
+
+\subsection{Warm-up}
+
+\textbf{Q1. What is the probability that a vertex is isolated in $G(n, p)$?} \textbf{Ans:} A given node $i$ cannot form an edge with each of the remaining $n - 1$ nodes. Thus the probability is $(1 - p)^{n-1}$. 
+
+\noindent \textbf{Q2. What is the expected number of edges in $G(n, p)$?} The total number of edges in a graph is ${n \choose 2}$, and each of these edges form with probability $p$. So we expect $p{n \choose 2}$ edges overall. 
+
+\section{Sharp Threshold for Connectivity}
+
+\begin{theorembox}{Erdos-Renyi 1961}{}
+Consider a graph $G \sim G(n, p(n))$ where $p(n) = \lambda \frac{\ln(n)}{n}$. Then as $n \rightarrow \infty$,
+\begin{align*}
+\begin{cases}
+	P(G \text{ connected}) \rightarrow 0 & \text{if } \lambda < 1\\
+	P(G \text{ connected}) \rightarrow 1 & \text{if } \lambda > 1
+\end{cases}
+\end{align*}
+\end{theorembox}
+
+\bibliographystyle{apalike}
+\bibliography{references}
+
+\end{document}
