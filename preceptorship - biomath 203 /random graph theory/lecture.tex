@@ -100,12 +100,36 @@ For the first term,
 \begin{align*}
 	\sum_{k=1}^{n^*} {n \choose k} n^{\frac{-\lambda}{n}(n-k)k}
 	&\le \sum_{k=1}^{n^*} n^k n^{\frac{-\lambda}{n}(n-k)k} = \sum_{k=1}^{n^*} \left[ n^{1 - \frac{\lambda}{n}(n-k)} \right]^k\\
-	&\le \sum_{k=1}^{n^*} \left[ n^{1 - \frac{\lambda}{n}(n-n^*)} \right]^k \quad \left(\text{want } n-k \text{ small, so want inside }k \text{ big}\right)\\
-	&= \sum_{k=1}^{n^*} r^k \quad \left(\text{define } r = n^{1 - \frac{\lambda}{n}(n-n^*)}\right)\\
+	&\le \sum_{k=1}^{n^*} \left[ n^{1 - \frac{\lambda}{n}(n-n^*)} \right]^k \qquad \left(\text{judiciously bound inner} k \text{ with something bigger}\right)\\
+	&= \sum_{k=1}^{n^*} r^k \qquad \left(\text{define } r = n^{1 - \frac{\lambda}{n}(n-n^*)}\right)\\
 	&= \left(\sum_{k=0}^{n^*} r^k\right) - 1\\
-	&= \frac{r}{1-r} \quad (\text{geometric series; } 1 - \frac{\lambda}{n}(n-n^*) < 0, \text{ so } r < 1)
+	&= \frac{r}{1-r} \qquad (\text{geometric series; } 1 - \frac{\lambda}{n}(n-n^*) < 0, \text{ so } r < 1)\\
+	&= \frac{1}{n^{\frac{\lambda}{n}(n-n^*) - 1} - 1}\\
+	&\longrightarrow 0 \qquad \left(\text{since } n \rightarrow \infty \text{ and exponent} > 0\right)
+\end{align*}
+For the second term, we use a better bound than before (see homework):
+\begin{align*}
+	{n \choose k} \leq \frac{n^k}{k!} = {n \choose k}^k \frac{k^k}{k!} < \left( \frac{n}{k} \right)^k\sum_{j=0}^\infty \frac{k^j}{j!}= \left(\frac{ek}{k}\right)^k.
+\end{align*}
+Thus 
+\begin{align*}
+	\sum_{k=n^* + 1}^{\lfloor n/2 \rfloor} {n \choose k} n^{\frac{-\lambda}{n}(n-k)k} 
+	&\le \sum_{k=n^* + 1}^{\lfloor n/2 \rfloor} \left(\frac{en}{k}\right)^k n^{\frac{-\lambda(n-k)k}{n}} = \sum_{k=n^* + 1}^{\lfloor n/2 \rfloor} \left[ \frac{en^{1 - \frac{\lambda(n-k)}{n}}}{k}\right]^k\\
+	&\le \sum_{k=n^* + 1}^{\lfloor n/2 \rfloor} \left[ \frac{en^{1-\frac{\lambda (n - \frac{n}{2})}{n}}}{n^* + 1}\right]^k \qquad (\text{bound inner } k \text{ with something from above})\\
+	&= \sum_{k=n^* + 1}^{\lfloor n/2 \rfloor} \left[\frac{en^{1 - \frac{\lambda}{2}}}{n(1 - \frac{1}{\lambda}) + 1}\right]^k \le \sum_{k=n^* + 1}^{\lfloor n/2 \rfloor} \left[\frac{en^{\frac{-\lambda}{2}}}{1 - \frac{1}{\lambda}}\right]^k\\
+	&\le \sum_{k=n^* + 1}^{\lfloor n/2 \rfloor}  r^k \qquad (r = \frac{en^{\frac{-\lambda}{2}}}{1 - \frac{1}{\lambda}}, 0 < r < 1 \text{ for large }n)\\
+	&\le \sum_{k=n^* + 1}^{\infty}r^k  = \sum_{k=0}^{\infty}r^k - \sum_{k=n^* + 1}^{n^*}r^k\\
+	&= \frac{1}{1-r} - \frac{1-r^{n^*+1}}{1-r} \qquad (\text{finite geometric series} \sum_{k=0}^{m}r^k = \frac{1-r^{m+1}}{1-r})\\
+	&= \frac{r^{n^* + 1}}{1-r} \longrightarrow 0 \qquad \text{since } n^* \rightarrow \infty.
 \end{align*}
 \end{proof}
+
+\begin{problembox}{Bounds of binomial coefficients}{}
+For integers $n$ and $k$, prove the following inequalities
+\begin{align*}
+	\frac{n^k}{k^k} \le {n \choose k} \le \frac{n^k}{k!} < \left( \frac{ne}{k}\right)^k.
+\end{align*}
+\end{problembox}
 
 \bibliographystyle{apalike}
 \bibliography{references}
