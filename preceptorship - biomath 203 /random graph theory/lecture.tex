@@ -5,6 +5,7 @@
 \author{Benjamin Chu}
 \maketitle
 
+\singlespacing
 Most materials from this note is taken from \cite{Acemoglu, Ramchandran}
 
 \section{Erdos-Renyi Graph Model}
@@ -25,15 +26,86 @@ Most materials from this note is taken from \cite{Acemoglu, Ramchandran}
 
 \section{Sharp Threshold for Connectivity}
 
+The first lecture will be a proof of the following result. This proof uses several techniques you learned in this class.
+
 \begin{theorembox}{Erdos-Renyi 1961}{}
-Consider a graph $G \sim G(n, p(n))$ where $p(n) = \lambda \frac{\ln(n)}{n}$. Then as $n \rightarrow \infty$,
+Consider a graph $g \sim G(n, p(n))$ where $p(n) = \lambda \frac{\ln(n)}{n}$. Then as $n \rightarrow \infty$,
 \begin{align*}
-\begin{cases}
-	P(G \text{ connected}) \rightarrow 0 & \text{if } \lambda < 1\\
-	P(G \text{ connected}) \rightarrow 1 & \text{if } \lambda > 1
-\end{cases}
+	P(g \text{ connected}) \rightarrow 0 & \quad \text{if } \lambda < 1\\
+	P(g \text{ connected}) \rightarrow 1 & \quad \text{if } \lambda > 1
 \end{align*}
 \end{theorembox}
+
+\begin{proof}
+Suppose $\lambda < 1$. Since $P(\text{connected}) = 1 - P(\text{disconnected})$, we will show $P(\text{disconnected}) \rightarrow 1$ by showing that \textbf{there is at least 1 isolated node}. Define
+\begin{itemize}
+	\item $X_n$ to be a random variable that counts the number of isolated nodes
+	\item $I_i$ to be a (Bernoulli) indicator random variable such that $I_i = 1$ when node $i$ is isolated and is $0$ otherwise
+	\item Let $p = p(n)$ and $q = q(n) = (1 - p(n))^{n - 1}$ be  the probability of a node being isolated
+\end{itemize}
+We want to show $P(X_n > 0) \rightarrow 1$, or equivalently, $P(X_n = 0) \rightarrow 0$ by rules of probability complements. To get a bound on $P(X_n = 0)$, we observe:
+\begin{align*}
+	\Var(X_n) 
+	&= E\left(X_n - E(X_n)\right)\\
+	&= P(X_n = 0)(0 - E(X_n)^2 + P(X_n = 1)(1 - E(X_n))^2 + ...\\
+	&\ge P(X_n = 0)E(X_n)^2.
+\end{align*}
+Thus 
+\begin{align}\label{claim1}
+\frac{\Var(X_n)}{E(X_n)^2} \ge P(X_n=0). 
+\end{align}
+We will now calculate $\Var(X_n)$ and $E(X_n)$ explicitly to show that the left hand side of \eqref{claim1} goes to 0. By linearity of expectation and applying definition of indicators,
+\begin{align*}
+	\E(X_n) = \E\left(\sum_{i=1}^n I_i\right) = \sum_{i=1}^n\E(I_i) = \sum_{i=1}^nP(I_i) = nq.
+\end{align*}
+Since indicators $I_i$ are \textbf{not independent} (why?), we use equation (1.10) in your book \cite{lange2010applied}:
+\begin{align*}
+	\Var(X_n) 
+	&= \Var\left(\sum_{i=1}^nI_i\right) = \sum_{i=1}^n\Var(I_i) + \sum_{i=1}^n\sum_{j\neq i} \Cov(I_i, I_j)\\
+	&= \sum_{i=1}^n q(1-q) + \sum_{i=1}^n \sum_{j\neq i}\left[ E(I_iI_j) - E(I_i)E(I_j) \right] \quad (\text{since Var(Bernoulli)} = p(1-p))\\
+	&= nq(1-q) + \sum_{i=1}^n \sum_{j\neq i}\left[ P(I_i \cap I_j) - P(I_i)P(I_j) \right]\\
+	&= nq(1-q) + \sum_{i=1}^n\sum_{j\neq i}\left[ (1-p)^{n-1}(1-p)^{n-2} - (1-p)^{n-1}(1-p)^{n-1} \right]\\
+	&= nq(1-q) + \sum_{i=1}^n\sum_{j\neq i}\left[ \frac{q^2}{1-p} - q^2 \right]\\
+	&= nq(1-q) + n(n-1)q^2\frac{p}{1-p}.
+\end{align*}
+Thus 
+\begin{align*}
+	\frac{\Var(X_n)}{E(X_n)^2} 
+	&= \frac{nq(1-q) + n(n-1)q^2\frac{p}{1-p}}{(nq)^2} = \frac{1-q}{nq} + \frac{n-1}{n}\frac{p}{1-p}.
+\end{align*}
+We will now show these terms approach 0 as $n \rightarrow \infty$, then eq \eqref{claim1} will give us what we need.
+The first term is dominated by $nq$, and
+\begin{align*}
+	\lim_{n \rightarrow \infty} nq 
+	&= \lim_{n \rightarrow \infty} n(1-p)^{n-1} = \lim_{n \rightarrow \infty}  \exp \left\{ \ln(n) + (n-1)\ln(1 - p) \right\}\\
+	&= \lim_{n \rightarrow \infty} \exp \left\{ \ln(n) + (n-1)\ln\left( 1 - \frac{\lambda \ln(n)}{n} \right) \right\}\\
+	&\approx \lim_{n \rightarrow \infty} \exp \left\{ \ln(n) - \lambda\frac{n-1}{n}\ln(n) \right\} \quad (\ln(1 - x) = 1 - x + \frac{x^2}{2}- ... \approx -x + O(x^2) \text{ for small }x)\\
+	&= \lim_{n \rightarrow \infty} \exp \left\{ \ln(n)\left( 1 - \lambda\frac{n-1}{n} \right) \right\}\\
+	&= \infty \quad \left(\text{since } \lambda < 1\right)
+\end{align*}
+For the second term, observe that $p = \lambda \frac{\ln(n)}{n} \rightarrow 0$ as $n \rightarrow \infty$. So $\frac{p}{1-p} \rightarrow 0$ as well. This completes the case for $\lambda < 1$. \\
+\\
+\textbf{Part II.} Now suppose $\lambda > 1$. We want to show $P(\text{connected})\rightarrow 1,$ or equivalently $P(\text{disconnected})\rightarrow 0$. A graph is disconnected if there is a subgraph of $k$ nodes that does not connect to any of the other $n - k$ nodes (draw a picture). By symmetry, we only have to consider $k \in \{1, 2, ... \lfloor n/2 \rfloor\}$.  So 
+\begin{align*}
+	P(\text{disconnected}) 
+	&= \bigcup_{k=1}^{\lfloor n/2 \rfloor} P(\text{some set of } k \text{ nodes not connected to the rest})\\
+	&\le \sum_{k=1}^{\lfloor n/2 \rfloor} P(\text{some set of } k \text{ nodes not connected to the rest}) \quad (\text{inclusion-exclusion picture})\\
+	&= \sum_{k=1}^{\lfloor n/2 \rfloor} {n \choose k} \left[ (1-p)^{(n - k)} \right]^k\\
+	&\le \sum_{k=1}^{\lfloor n/2 \rfloor} {n \choose k} e^{p(n-k)k} \quad \left(e^{-x} = 1 - x + \frac{x^2}{2} - ... \approx 1 - x + O(x^2) \text{ for small }x\right)\\
+	&= \sum_{k=1}^{\lfloor n/2 \rfloor} {n \choose k} \exp\left\{\frac{-\lambda \ln(n)(n-k)k}{n}\right\}\\
+	&= \sum_{k=1}^{\lfloor n/2 \rfloor} {n \choose k} n^{\frac{-\lambda}{n}(n-k)k}\\
+	&= \sum_{k=1}^{n^*} {n \choose k} n^{\frac{-\lambda}{n}(n-k)k} + \sum_{k=n^* + 1}^{\lfloor n/2 \rfloor} {n \choose k} n^{\frac{-\lambda}{n}(n-k)k} \quad \left(\text{Choose } n^* s.t. \frac{\lambda(n - n^*)}{n}>1 \iff n^* = \lfloor n(1 - \frac{1}{\lambda}) \rfloor\right)
+\end{align*}
+For the first term, 
+\begin{align*}
+	\sum_{k=1}^{n^*} {n \choose k} n^{\frac{-\lambda}{n}(n-k)k}
+	&\le \sum_{k=1}^{n^*} n^k n^{\frac{-\lambda}{n}(n-k)k} = \sum_{k=1}^{n^*} \left[ n^{1 - \frac{\lambda}{n}(n-k)} \right]^k\\
+	&\le \sum_{k=1}^{n^*} \left[ n^{1 - \frac{\lambda}{n}(n-n^*)} \right]^k \quad \left(\text{want } n-k \text{ small, so want inside }k \text{ big}\right)\\
+	&= \sum_{k=1}^{n^*} r^k \quad \left(\text{define } r = n^{1 - \frac{\lambda}{n}(n-n^*)}\right)\\
+	&= \left(\sum_{k=0}^{n^*} r^k\right) - 1\\
+	&= \frac{r}{1-r} \quad (\text{geometric series; } 1 - \frac{\lambda}{n}(n-n^*) < 0, \text{ so } r < 1)
+\end{align*}
+\end{proof}
 
 \bibliographystyle{apalike}
 \bibliography{references}

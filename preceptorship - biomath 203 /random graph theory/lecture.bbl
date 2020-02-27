@@ -3,9 +3,16 @@
 \bibitem[Acemoglu and Ozdaglar, 2009]{Acemoglu}
 Acemoglu, D. and Ozdaglar, A. (2009).
 \newblock {Lecture 3: Erdos-Renyi graphs and Branching Processes}.
+\newblock \url{http://economics.mit.edu/files/4621}.
+
+\bibitem[Lange, 2010]{lange2010applied}
+Lange, K. (2010).
+\newblock {\em Applied probability}.
+\newblock Springer Science \& Business Media.
 
 \bibitem[Ramchandran, 2009]{Ramchandran}
 Ramchandran, K. (2009).
 \newblock {Random Graphs}.
+\newblock \url{https://inst.eecs.berkeley.edu/~ee126/sp18/random-graphs.pdf}.
 
 \end{thebibliography}
