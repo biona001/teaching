@@ -22,7 +22,9 @@ Most materials from this note is taken from \cite{Acemoglu, Ramchandran}
 
 \textbf{Q1. What is the probability that a vertex is isolated in $G(n, p)$?} \textbf{Ans:} A given node $i$ cannot form an edge with each of the remaining $n - 1$ nodes. Thus the probability is $(1 - p)^{n-1}$. 
 
-\noindent \textbf{Q2. What is the expected number of edges in $G(n, p)$?} The total number of edges in a graph is ${n \choose 2}$, and each of these edges form with probability $p$. So we expect $p{n \choose 2}$ edges overall. 
+\noindent \textbf{Q2. What is the probability that node 1 and node 2 are both isolated?} Let $I_1, I_2$ be the indicator that node 1 and node 2 are isolated. Then $P(I_1 \cap I_2) = P(I_1)P(I_2 \ | \ I_1)  = (1-p)^{n-1} * (1 - p)^{n - 2} = (1 - p)^{2n-3}$. 
+
+\noindent \textbf{Q3. What is the probability that a group of $k$ nodes do not connect to the rest of the $n-k$ nodes?} There are ${n \choose k}$ number of ways to choose $k$ vertices. Each of these cannot form an edge with the remaining $n-k$ nodes independently with probability $(1-p)^{n-k}$. So overall we have $(1-p)^{(n-k)k}$. 
 
 \section{Sharp Threshold for Connectivity}
 
@@ -43,7 +45,7 @@ Suppose $\lambda < 1$. Since $P(\text{connected}) = 1 - P(\text{disconnected})$,
 	\item $I_i$ to be a (Bernoulli) indicator random variable such that $I_i = 1$ when node $i$ is isolated and is $0$ otherwise
 	\item Let $p = p(n)$ and $q = q(n) = (1 - p(n))^{n - 1}$ be  the probability of a node being isolated
 \end{itemize}
-We want to show $P(X_n > 0) \rightarrow 1$, or equivalently, $P(X_n = 0) \rightarrow 0$ by rules of probability complements. To get a bound on $P(X_n = 0)$, we observe:
+We want to show $P(X_n > 0) \rightarrow 1$, or equivalently, $P(X_n = 0) \rightarrow 0$. To get a bound on $P(X_n = 0)$, we observe:
 \begin{align*}
 	\Var(X_n) 
 	&= E\left(X_n - E(X_n)\right)\\
@@ -56,7 +58,7 @@ Thus
 \end{align}
 We will now calculate $\Var(X_n)$ and $E(X_n)$ explicitly to show that the left hand side of \eqref{claim1} goes to 0. By linearity of expectation and applying definition of indicators,
 \begin{align*}
-	\E(X_n) = \E\left(\sum_{i=1}^n I_i\right) = \sum_{i=1}^n\E(I_i) = \sum_{i=1}^nP(I_i) = nq.
+	E(X_n) = E\left(\sum_{i=1}^n I_i\right) = \sum_{i=1}^nE(I_i) = \sum_{i=1}^nP(I_i) = nq.
 \end{align*}
 Since indicators $I_i$ are \textbf{not independent} (why?), we use equation (1.10) in your book \cite{lange2010applied}:
 \begin{align*}
@@ -81,7 +83,7 @@ The first term is dominated by $nq$, and
 	&= \lim_{n \rightarrow \infty} \exp \left\{ \ln(n) + (n-1)\ln\left( 1 - \frac{\lambda \ln(n)}{n} \right) \right\}\\
 	&\approx \lim_{n \rightarrow \infty} \exp \left\{ \ln(n) - \lambda\frac{n-1}{n}\ln(n) \right\} \quad (\ln(1 - x) = 1 - x + \frac{x^2}{2}- ... \approx -x + O(x^2) \text{ for small }x)\\
 	&= \lim_{n \rightarrow \infty} \exp \left\{ \ln(n)\left( 1 - \lambda\frac{n-1}{n} \right) \right\}\\
-	&= \infty \quad \left(\text{since } \lambda < 1\right)
+	&= \infty \qquad \left(\text{since } \lambda < 1 \text{ and } n \rightarrow \infty \right)
 \end{align*}
 For the second term, observe that $p = \lambda \frac{\ln(n)}{n} \rightarrow 0$ as $n \rightarrow \infty$. So $\frac{p}{1-p} \rightarrow 0$ as well. This completes the case for $\lambda < 1$. \\
 \\
@@ -109,7 +111,7 @@ For the first term,
 \end{align*}
 For the second term, we use a better bound than before (see homework):
 \begin{align*}
-	{n \choose k} \leq \frac{n^k}{k!} = {n \choose k}^k \frac{k^k}{k!} < \left( \frac{n}{k} \right)^k\sum_{j=0}^\infty \frac{k^j}{j!}= \left(\frac{ek}{k}\right)^k.
+	{n \choose k} < \left(\frac{ek}{k}\right)^k.
 \end{align*}
 Thus 
 \begin{align*}
@@ -124,11 +126,16 @@ Thus
 \end{align*}
 \end{proof}
 
+\section{Problems}
+
+In honor of Ken Lange, you are required to do 2 problems. If you do more I will grade your top 2 problems. Every problem is worth the same number of points. If a problem has subproblems, each subproblem is worth the same number of points.
+
 \begin{problembox}{Bounds of binomial coefficients}{}
 For integers $n$ and $k$, prove the following inequalities
 \begin{align*}
-	\frac{n^k}{k^k} \le {n \choose k} \le \frac{n^k}{k!} < \left( \frac{ne}{k}\right)^k.
+	\frac{n^k}{k^k} \le {n \choose k} \le \frac{n^k}{k!} < \left( \frac{ne}{k}\right)^k
 \end{align*}
+which is used in our proof for theorem 2.1. For the strict inequality, rewrite $\frac{n^k}{k!} = \left(\frac{n}{k}\right)^k \frac{k^k}{k!}$ and use Taylor expansion on $e^k$.
 \end{problembox}
 
 \bibliographystyle{apalike}
