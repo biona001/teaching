@@ -126,6 +126,20 @@ Thus
 \end{align*}
 \end{proof}
 
+\section{Clustering graphs}
+
+Sometimes it is informative to lump a graph's nodes into several  groups, so that there are much more edges within groups than between groups. There are many ways to do this, but this lecture will cover a simple extension of k-means clustering based on random walks \cite{yen2005clustering}. First some motivations:
+
+\begin{itemize}
+	\item Document classification
+	\item Image segmentation
+	\item Protein structural integrity: consider a protein where each amino acid residue are nodes. We can cluster the residues to identify protein substructure and/or important residues crucial for the protein's structural or catalytic functions.  
+\end{itemize}
+
+\subsection{Review: Euclidean distance for K-means and Hierarchical clustering}
+
+Clustering algorithms require some measures of distance between nodes $\bx$ and $\by$. One common distance measure is the Euclidean distance: $d(\bx, \by) = \sqrt{\sum_{i}(x_i - y_i)^2}$. 
+
 \section{Problems}
 
 In honor of Ken Lange, you are required to do 2 problems. If you do more I will grade your top 2 problems. Every problem is worth the same number of points. If a problem has subproblems, each subproblem is worth the same number of points.
@@ -138,6 +152,15 @@ For integers $n$ and $k$, prove the following inequalities
 which is used in our proof for theorem 2.1. For the strict inequality, rewrite $\frac{n^k}{k!} = \left(\frac{n}{k}\right)^k \frac{k^k}{k!}$ and use Taylor expansion on $e^k$.
 \end{problembox}
 
+\begin{problembox}{Colorings of graphs}{}
+Let $K_z$ be a \textbf{complete graph} where all $z \in \Z_+$ nodes forms an edge with every other node. With equal probability, each edge is colored with red or green. Prove that $z=6$ is the minimal number of nodes needed to guarantee the existance of a \textbf{monochromatic triangle} (i.e. triangle with all edges the same color).
+\end{problembox}
+Side story to this problem: in Ramsey theory, this corresponds to the value $R(3, 3)$. Similarly, $R(3, 4)$ is the minimal number of nodes to guarantee a red triangle or green square. Function $R$ obviously generalizes to more colors and shapes. Using Erdos' probabilistic method, Ramsey's theorem (see \cite{sebv} or theorem 3.3 of \cite{van2001course}) says this number is finite but exponential.  This takes us to Erdos' famous quote:
+
+\begin{displayquote}
+Suppose aliens invade earth and threaten to obliterate us within a year unless human beings can find $R(5, 5)$. We could marshal the world's best minds and fastest computers, and within a year we could probably calculate the value. However, if the aliens demanded $R(6, 6)$, we would have no choice but to launch a preemptive attack.
+\end{displayquote}
+If you want to be famous, find $R(5, 5)$. 
 \bibliographystyle{apalike}
 \bibliography{references}
 

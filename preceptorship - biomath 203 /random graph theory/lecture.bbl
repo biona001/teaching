@@ -15,4 +15,21 @@ Ramchandran, K. (2009).
 \newblock {Random Graphs}.
 \newblock \url{https://inst.eecs.berkeley.edu/~ee126/sp18/random-graphs.pdf}.
 
+\bibitem[Van~Lint et~al., 2001]{van2001course}
+Van~Lint, J.~H., Wilson, R.~M., and Wilson, R.~M. (2001).
+\newblock {\em A course in combinatorics}.
+\newblock Cambridge university press.
+
+\bibitem[Vasey, 2018]{sebv}
+Vasey, S. (2018).
+\newblock {The Probabilistic Method and Ramsey Theory}.
+\newblock
+  \url{http://people.math.harvard.edu/~sebv/probability-spring-2018/probabilistic-notes.pdf}.
+
+\bibitem[Yen et~al., 2005]{yen2005clustering}
+Yen, L., Vanvyve, D., Wouters, F., Fouss, F., Verleysen, M., and Saerens, M.
+  (2005).
+\newblock clustering using a random walk based distance measure.
+\newblock In {\em ESANN}, pages 317--324.
+
 \end{thebibliography}
