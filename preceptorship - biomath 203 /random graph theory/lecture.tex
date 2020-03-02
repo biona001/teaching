@@ -6,14 +6,41 @@
 \maketitle
 
 \singlespacing
-Most materials from this note is taken from \cite{Acemoglu, Ramchandran}
+
+\section{Basics of Graph Theory}
+
+\begin{itemize}
+	\item A graph $G$ is a pair of sets $G = (V, E)$ where $V$ is a set of vertices and $E$ is a set of edges where $e \in E$ can be written as $e = (x, y)$ where $x, y \in V$. 
+	\item It is comon to represent a graph by \textit{drawing}. Each vertex $v \in V$ is represented as a point in the plane, while edges are lines connecting pairs of points. 
+\end{itemize}
+
+\noindent There are a number of special graphs, which we will only mention. 
+\begin{itemize}
+	\item A graph with $n$ nodes is \textbf{complete} (denoted by $K_n$) if every node forms an edge with every other node. 
+	\item A \textbf{cycle graph} (denoted by $C_n$) is a graph that consists of nodes connected in a closed chain. 
+	\item A \textbf{tree} is a connected graph with no cycles. 
+\end{itemize}
+
+\noindent The following theorem will get you started with the basics of graph theory.
+
+\begin{theorembox}{First theorem of graph theory}{}
+A finite graph $G$ has an even number of vertices with odd \textbf{degree} (i.e. the number of edges incident to it).
+\end{theorembox}
+
+\begin{proof}
+Since each edge connects 2 nodes, 
+\begin{align*}
+	2|E| = 	\sum_{v \in V} deg(v) = \sum_{\substack{v \in V\\ deg(v) \text{ even}}} deg(v) + \sum_{\substack{u \in V\\ deg(u) \text{ odd}}} deg(u) \ \Longrightarrow \ \left(\sum_{\substack{u \in V\\ deg(u) \text{ odd}}} deg(u)\right) \text{ is even.}
+\end{align*}
+If the sum is even, and each summand is odd, then there must be an even number of summands.
+\end{proof}
 
 \section{Erdos-Renyi Graph Model}
 
 \begin{itemize}
-	\item We use $G(n, p)$ to denote an undirected (Erdos-Renyi) graph with $n$ nodes.
-	\item An edge is formed between 2 nodes with probability $p \in (0, 1)$ \textbf{independently} of other edges. 
-	\item A graph is \textbf{connected} when there is a path between every pair of vertices. 
+	\item We use $G(n, p)$ to denote an undirected (Erdos-Renyi) graph with $n$ nodes and probability of forming an edge $p(n)$.
+	\item Each edge forms with probability $p \in (0, 1)$ \textbf{independently} of other edges. 
+	\item An graph is \textbf{connected} if there is a path between any 2 pairs of nodes. 
 \end{itemize}
 
 \noindent When $p = p(n)$ is a function of $n$, we may be interested in the behavior of $G(n, p(n))$ as $n \rightarrow \infty$. 
@@ -28,7 +55,7 @@ Most materials from this note is taken from \cite{Acemoglu, Ramchandran}
 
 \section{Sharp Threshold for Connectivity}
 
-The first lecture will be a proof of the following result. This proof uses several techniques you learned in this class.
+The first lecture will (hopefully) end in a proof of the following result. Most materials for this section note is taken from \cite{Acemoglu, Ramchandran}
 
 \begin{theorembox}{Erdos-Renyi 1961}{}
 Consider a graph $g \sim G(n, p(n))$ where $p(n) = \lambda \frac{\ln(n)}{n}$. Then as $n \rightarrow \infty$,
@@ -128,7 +155,7 @@ Thus
 
 \section{Clustering graphs}
 
-Sometimes it is informative to lump a graph's nodes into several  groups, so that there are much more edges within groups than between groups. There are many ways to do this, but this lecture will cover a simple extension of k-means clustering based on random walks \cite{yen2005clustering}. First some motivations:
+Sometimes it is useful to \textbf{cluster} a graph, which lumps a graph's nodes into several groups so that there are much more edges within groups than between groups. There are many ways to do this, but this lecture will cover a simple extension of k-means clustering based on random walks \cite{yen2005clustering}. First some motivations:
 
 \begin{itemize}
 	\item Document classification
@@ -138,7 +165,7 @@ Sometimes it is informative to lump a graph's nodes into several  groups, so tha
 
 \subsection{Review: Euclidean distance for K-means and Hierarchical clustering}
 
-Clustering algorithms require some measures of distance between nodes $\bx$ and $\by$. One common distance measure is the Euclidean distance: $d(\bx, \by) = \sqrt{\sum_{i}(x_i - y_i)^2}$. 
+Clustering algorithms require some measures of distance between 2 nodes: $\bx$ and $\by$. One common distance measure is the Euclidean distance: $d(\bx, \by) = \sqrt{\sum_{i}(x_i - y_i)^2}$. 
 
 \section{Problems}
 
@@ -149,7 +176,7 @@ For integers $n$ and $k$, prove the following inequalities
 \begin{align*}
 	\frac{n^k}{k^k} \le {n \choose k} \le \frac{n^k}{k!} < \left( \frac{ne}{k}\right)^k
 \end{align*}
-which is used in our proof for theorem 2.1. For the strict inequality, rewrite $\frac{n^k}{k!} = \left(\frac{n}{k}\right)^k \frac{k^k}{k!}$ and use Taylor expansion on $e^k$.
+which is used in part 2 of our sharp threshold proof. For the strict inequality, rewrite $\frac{n^k}{k!} = \left(\frac{n}{k}\right)^k \frac{k^k}{k!}$ and use Taylor expansion on $e^k$.
 \end{problembox}
 
 \begin{problembox}{Colorings of graphs}{}
