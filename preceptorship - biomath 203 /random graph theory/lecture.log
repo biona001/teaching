@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018) (preloaded format=pdflatex 2018.5.6)  1 MAR 2020 20:10
+This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018) (preloaded format=pdflatex 2018.5.6)  1 MAR 2020 22:21
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1001,6 +1001,9 @@ LaTeX Warning: Label `ex:' multiply defined.
 
 LaTeX Warning: Label `ex:' multiply defined.
 
+
+LaTeX Warning: Label `ex:' multiply defined.
+
 )
 \openout1 = `lecture.aux'.
 
@@ -1155,48 +1158,79 @@ File: t1cmss.fd 2014/09/29 v2.5h Standard LaTeX font definitions
 
 {/usr/local/texlive/2018/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
 LaTeX Font Info:    Font shape `T1/ptm/bx/n' in size <12> not available
-(Font)              Font shape `T1/ptm/b/n' tried instead on input line 48.
+(Font)              Font shape `T1/ptm/b/n' tried instead on input line 49.
 
 
 Package amsmath Warning: Foreign command \atopwithdelims;
 (amsmath)                \frac or \genfrac should be used instead
-(amsmath)                 on input line 54.
+(amsmath)                 on input line 55.
 
-[2]
-Underfull \hbox (badness 10000) in paragraph at lines 114--118
+
+Underfull \hbox (badness 10000) in paragraph at lines 55--56
 
  []
 
-[3]
-Overfull \hbox (43.8668pt too wide) detected at line 127
+[2]
+Underfull \hbox (badness 10000) in paragraph at lines 111--115
+
+ []
+
+
+Overfull \hbox (43.8668pt too wide) detected at line 124
 []
  []
 
-[4] [5] (./lecture.bbl
-LaTeX Font Info:    Try loading font information for T1+cmtt on input line 6.
+[3] [4]
+Underfull \hbox (badness 10000) in paragraph at lines 167--171
 
-(/usr/local/texlive/2018/texmf-dist/tex/latex/base/t1cmtt.fd
+ []
+
+<figures/shape.png, id=49, 505.89pt x 355.3275pt>
+File: figures/shape.png Graphic file (type png)
+<use figures/shape.png>
+Package pdftex.def Info: figures/shape.png  used on input line 181.
+(pdftex.def)             Requested size: 286.63618pt x 201.3297pt.
+<figures/scale.png, id=50, 273.4215pt x 271.0125pt>
+File: figures/scale.png Graphic file (type png)
+<use figures/scale.png>
+Package pdftex.def Info: figures/scale.png  used on input line 187.
+(pdftex.def)             Requested size: 191.08592pt x 189.4097pt.
+
+Overfull \hbox (2.08049pt too wide) in paragraph at lines 180--191
+[][] [] 
+ []
+
+[5]
+LaTeX Font Info:    Try loading font information for T1+cmtt on input line 194.
+
+ (/usr/local/texlive/2018/texmf-dist/tex/latex/base/t1cmtt.fd
 File: t1cmtt.fd 2014/09/29 v2.5h Standard LaTeX font definitions
-) [6]) [7]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 194.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 194.
+)
+Overfull \hbox (37.18964pt too wide) in paragraph at lines 193--195
+\T1/cmtt/m/n/10.95 https://stats.stackexchange.com/questions/133656/how-to-unde
+rstand-the-drawbacks-of-k-means 
+ []
 
-(./lecture.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 194.
-Package atveryend Info: Empty hook `AtEndAfterFileList' on input line 194.
+[6 <./figures/shape.png (PNG copy)> <./figures/scale.png>] [7] (./lecture.bbl)
+[8]
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 266.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 266.
+ (./lecture.aux)
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 266.
+Package atveryend Info: Empty hook `AtEndAfterFileList' on input line 266.
 
 
 LaTeX Warning: There were multiply-defined labels.
 
  ) 
 Here is how much of TeX's memory you used:
- 26731 strings out of 492649
- 505301 string characters out of 6129623
- 654063 words of memory out of 5000000
- 30048 multiletter control sequences out of 15000+600000
- 67143 words of font info for 135 fonts, out of 8000000 for 9000
+ 26774 strings out of 492649
+ 505917 string characters out of 6129623
+ 658063 words of memory out of 5000000
+ 30078 multiletter control sequences out of 15000+600000
+ 69865 words of font info for 137 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 64i,17n,87p,468b,858s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 64i,17n,87p,514b,858s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/local/texlive/2018/texmf-dist/fonts/enc/dvips/cm-super/cm-super-t1.enc}
 {/usr/local/texlive/2018/texmf-dist/fonts/enc/dvips/base/8r.enc}</usr/local/tex
 live/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/local/texl
@@ -1211,10 +1245,10 @@ dist/fonts/type1/urw/symbol/usyr.pfb></usr/local/texlive/2018/texmf-dist/fonts/
 type1/urw/times/utmb8a.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/urw/
 times/utmr8a.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/urw/times/utmr
 i8a.pfb>
-Output written on lecture.pdf (7 pages, 160199 bytes).
+Output written on lecture.pdf (8 pages, 258422 bytes).
 PDF statistics:
- 153 PDF objects out of 1000 (max. 8388607)
- 130 compressed objects within 2 object streams
- 27 named destinations out of 1000 (max. 500000)
- 69 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 172 PDF objects out of 1000 (max. 8388607)
+ 145 compressed objects within 2 object streams
+ 35 named destinations out of 1000 (max. 500000)
+ 87 words of extra memory for PDF output out of 10000 (max. 10000000)
 
