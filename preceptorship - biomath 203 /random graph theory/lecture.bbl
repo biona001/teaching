@@ -5,6 +5,13 @@ Acemoglu, D. and Ozdaglar, A. (2009).
 \newblock {Lecture 3: Erdos-Renyi graphs and Branching Processes}.
 \newblock \url{http://economics.mit.edu/files/4621}.
 
+\bibitem[Fouss et~al., 2007]{fouss2007random}
+Fouss, F., Pirotte, A., Renders, J.-M., and Saerens, M. (2007).
+\newblock Random-walk computation of similarities between nodes of a graph with
+  application to collaborative recommendation.
+\newblock {\em IEEE Transactions on knowledge and data engineering},
+  19(3):355--369.
+
 \bibitem[Lange, 2010]{lange2010applied}
 Lange, K. (2010).
 \newblock {\em Applied probability}.

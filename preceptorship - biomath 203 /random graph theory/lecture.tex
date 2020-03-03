@@ -162,7 +162,7 @@ Sometimes it is useful to \textbf{cluster} a graph, which lumps a graph's nodes 
 %	\item Protein structural integrity: consider a protein where each amino acid residue are nodes. We can cluster the residues to identify protein substructure and/or important residues crucial for the protein's structural or catalytic functions.  
 %\end{itemize}
 
-\subsection{Euclidean distance for clustering}
+\subsection{Euclidean distance for clustering in k-means algorithm}
 
 Clustering algorithms require some measures of similarity (i.e. distance) between 2 nodes. One common distance measure is the Euclidean distance: $d(\bx, \by) = \sqrt{\sum_{i}(x_i - y_i)^2}$. This defines the traditional k-means and hierarchical clustering algorithms.\\
 \\
@@ -171,62 +171,66 @@ Clustering algorithms require some measures of similarity (i.e. distance) betwee
 	\item Randomly initialize $k$ cluster centers $c_1,...c_k$. 
 	\item Assign each node to some cluster based on the smallest \textbf{Euclidean distance} to each cluster center $c_i$.
 	\item Update center location $c_1, ..., c_k$ by computing the means of the nodes in the cluster. 
-	\item Repeat until assignments no longer change
+	\item Repeat 2 and 3 until assignments no longer change
 \end{enumerate}
 
-\subsection{k-means is sensitive to the shape and scale of data}
+It is well known that k-means often fail because the Euclidean distance implicitly assumes data has Gaussian shape. Some examples that it fails:
 
 \begin{figure}[H]
   \begin{subfigure}[b]{0.6\textwidth}
     \includegraphics[width=\textwidth]{figures/shape.png}
-    \caption{Non-Gaussian shape}
-    \label{fig:1}
   \end{subfigure}
-  %
   \begin{subfigure}[b]{0.4\textwidth}
-    \includegraphics[width=\textwidth]{figures/scale.png}
-    \caption{Different scale}
-    \label{fig:2}
+    \includegraphics[width=\textwidth]{figures/shape2.png}
   \end{subfigure}
 \end{figure}
 
-Figures from\\
-\texttt{https://stats.stackexchange.com/questions/133656/how-to-understand-the-drawbacks-of-k-means}
+Figures from
+\begin{itemize}
+	\footnotesize
+	\item \texttt{https://stats.stackexchange.com/questions/133656/how-to-understand-the-drawbacks-of-k-means}
+	\item \texttt{http://i-systems.github.io/HSE545/machine\%20learning\%20all/05\%20Clustering/iSystems\_01\_K-means\_Clustering.html}
+\end{itemize}
 
-\section{Euclidian
-Commute Time Distance Based on Random Walk}
+\subsection{Random Walk on a Graph is a Markov chain}
 
 Markov chain setup:
 \begin{itemize}
-	\item Consider a \textbf{weighted graph} with $N$ nodes where each edge connecting nodes $i$ and $j$ has a weight $w_{ij} > 0$. 
+	\item Consider a connected \textbf{weighted graph} with $N$ nodes where each edge connecting nodes $i$ and $j$ has a weight $w_{ij} > 0$ that is symmetric $w_{ij} = w_{ji}$. 
 	\item Let each node of a graph be a state in a Markov chain. 
-	\item For node $i$, the probability of jumping to an adjacent node $j$ is $p_{ij} = \frac{a_{ij}}{a_{i\cdot}}$ where $a_{i\cdot} = \sum_{j} a_{ij}.$
+	\item For node $i$, the probability of jumping to an adjacent node $j$ is $p_{ij} = \frac{a_{ij}}{a_{i\cdot}}$ where $a_{i\cdot} = \sum_{j} a_{ij}.$ Hence large $w_{ij}$ values means easier communication through the edge. 
+	\item Connectivity implies the Markov chain is irreducible. 
 \end{itemize}
 
-\noindent Based on this Markov chain, we define 2 important quantities: 
+\noindent Based on this Markov chain, we define 3 important quantities: 
 
 \begin{itemize}
-	\item Starting at state $i$, the \textbf{average first passage time} \begin{align*}
-		m(k|i) = 
+	\item Starting at state $i$, the \textbf{average first passage time} \begin{align*}		
 		\begin{cases}
-			0 & \text{if } i = k\\
-			1 + \sum_{j} p_{ij}m(k|j) & \text{if } i\neq k.
+			m(k|k) = 0 \\
+			m(k|i) = 1 + \sum_{j=1}^N p_{ij}m(k|j) & \text{if } i\neq k.
 		\end{cases}
 	\end{align*}
-	is the average number of steps a random walker needs to enter state $k$ starting at state $i$.
+	is the average number of steps a random walker needs to enter state $k$.
+	\item Starting at state $i$, the \textbf{average first passage cost} \begin{align*}		
+		\begin{cases}
+			o(k|k) = 0 \\
+			o(k|i) = \sum_{j=1}^N p_{ij}c(j|i) + \sum_{j=1}^N p_{ij}m(k|j) & \text{if } i\neq k.
+		\end{cases}
+	\end{align*}
+	is the average cost incurred by the random walker to enter state $k$. $c(j|i)$ is the cost of transitioning from $i$ to $j$. Note $m(k|i)$ is a special case of $o(k|i)$ where all $c(j|i) = 1$. 
 	\item Starting at $i$, the \textbf{average commute time} 
 	\begin{align*}
 		n(i,j) = m(j|i) + m(i|j)
 	\end{align*}
-	is the number of steps a random walker take to enter $j \neq i$ for the first time, then go back to $i$. 
+	is the number of steps a random walker take to enter $j \neq i$ for the first time, then go back to $i$. One can show that this is a metric. 
 \end{itemize}
 
-Intuitively, $n(i, j)$ decreases when the number of paths connecting 2 nodes increase or when the length of any path decrease. The fact that it takes "connectivity" between nodes into account sets it apart from classical shortest path distances (e.g. Dijkstra distance). 
+\noindent \textbf{Intuition:} $n(i, j)$ decreases when 2 nodes are highly connected, or when the length of any path decrease. The fact that it takes "connectivity" between nodes into account sets it apart from  shortest path distances.
 
-Now define the \textbf{adjacency matrix} $\bA = (a_{ij})$ where $a_{ij} = w_{ij}$ if node $i$ is connected to $j$, otherwise $a_{ij} = 0$. Also define $\bD = \text{diag}(a_{i\cdot})$ (with $a_{i\cdot} = \sum_{j}a_{ij})$. The \textbf{Laplacian matrix} of the graph is 
-\begin{align*}
-	\bL = \bD - \bA.
-\end{align*}
+\subsection{Euclidean Commute Time (ETC) Distance}
+
+Define the \textbf{adjacency matrix} $\bA = (a_{ij})$ where $a_{ij} = w_{ij}$ if node $i$ is connected to $j$, otherwise $a_{ij} = 0$. Also define $\bD = \text{diag}(a_{i\cdot})$  where $a_{i\cdot} = \sum_{j}a_{ij}$. The \textbf{Laplacian matrix} of the graph is $\bL = \bD - \bA$, which is not full rank because $\bone$ (vector of 1s) is in its null space. Hence the following theorem involves a pseudoinverse $\bL^+$: 
 
 \begin{theorembox}{Computaton of average commute time $n(i, j)$}{}
 We can compute average commute time between nodes $i$ and $j$ by:
@@ -235,9 +239,42 @@ We can compute average commute time between nodes $i$ and $j$ by:
 \end{align*}
 where $\bL^+$ is the Moore-Penrose pseudoinverse of $\bL, V_G = \sum_{i,j} a_{ij}$ is the volume of the graph, and $\be_i$'s are the standard basis vectors that is $0$ everywhere and is $1$ at position $i$. 
 \end{theorembox}
+\begin{proof}
+See appendix of \cite{fouss2007random}. 
+\end{proof}
 
+\noindent Observe that:
+\begin{enumerate}
+	\item $\bL^+$ is symmetric since $\bL$ is. 
+	\item $\bL^+$ is positive semidefinite, since $\bL$ psd $\iff \bL^+$ psd, and $\bL$ is psd since it is diagonally dominant. 
+\end{enumerate}
 
+\noindent Here (1) + (2) above implies that $\bL^+$ defines an inner product between $\bx$ and $\by$ as $\langle\bx, \by\rangle = \bx^t\bL^+\by$ in $\R^n$. This induces a norm: $||\bx|| = (\bx^t\bL^+\bx)^{1/2}$. Therefore, the quantity $[n(i, j)]^{1/2}$ is called the \textbf{Euclidean Commute Time} (ETC) \textbf{Distance}. 
 
+\subsection{Revised k-means clustering using ETC Distance}
+
+\begin{enumerate}
+	\item Connect each node to its $h$ nearest neighbors, then add the edges of a minimum spanning tree. Then add weights $w_{ij}$ using your favorite method (e.g. inverse Euclidean distance). 
+	\item Choose number of clusters $k$ and its respective cluster centers $\bp_1,...,\bp_k$ where each $\bp_i$ is a node.
+	\item Assign each node $\bx_i$ to the nearest cluster $C_l$ by finding which of $\bp_1,...,\bp_k$ is closest to $\bx_i$, where closeness is measured by the ETC distance: $\dist(\bx_i, \bp_j) = n(i, j)^2$ 
+	\item Recompute new cluster centers $\bp_1,...,\bp_k$ so by minimizing the within-cluster distance:
+	\begin{align*}
+		\bp_l = \argmin_{\bx_j} \left\{ \sum_{\bx_k \in C_l}n(k, j)^2 \right\}
+	\end{align*}
+	\item Repeat (2) and (3) until convergence. 
+\end{enumerate}
+
+\noindent This gives the following clustering result:
+
+\begin{figure}[H]
+  \begin{subfigure}[b]{0.5\textwidth}
+    \includegraphics[width=\textwidth]{figures/etc_1.png}
+  \end{subfigure}
+  \quad 
+  \begin{subfigure}[b]{0.4\textwidth}
+    \includegraphics[width=\textwidth]{figures/etc_2.png}
+  \end{subfigure}
+\end{figure}
 
 \section{Problems}
 
@@ -251,10 +288,18 @@ For integers $n$ and $k$, prove the following inequalities
 which is used in part 2 of our sharp threshold proof. For the strict inequality, rewrite $\frac{n^k}{k!} = \left(\frac{n}{k}\right)^k \frac{k^k}{k!}$ and use Taylor expansion on $e^k$.
 \end{problembox}
 
-\begin{problembox}{Colorings of graphs}{}
-Let $K_z$ be a \textbf{complete graph} where all $z \in \Z_+$ nodes forms an edge with every other node. With equal probability, each edge is colored with red or green. Prove that $z=6$ is the minimal number of nodes needed to guarantee the existance of a \textbf{monochromatic triangle} (i.e. triangle with all edges the same color).
+\begin{problembox}{}{}
+Prove that $\bL^+$ in theorem 3.1 can be computed via
+\begin{align*}
+	\bL^+ = \left(\bL - \frac{ \bone\bone^t }{n}\right)^{-1} + \frac{\bone\bone^t}{n}
+\end{align*}
+where $\bone$ is a vector of 1s. This is equation (3) in \cite{fouss2007random}, but it came without a proof.
 \end{problembox}
-Side story to this problem: in Ramsey theory, this corresponds to the value $R(3, 3)$. Similarly, $R(3, 4)$ is the minimal number of nodes to guarantee a red triangle or green square. Function $R$ obviously generalizes to more colors and shapes. Using Erdos' probabilistic method, Ramsey's theorem (see \cite{sebv} or theorem 3.3 of \cite{van2001course}) says this number is finite but exponential.  This takes us to Erdos' famous quote:
+
+\begin{problembox}{Colorings of graphs}{}
+Let $K_z$ be a \textbf{complete graph} where all $z \in \Z_+$ nodes forms an edge with every other node. With equal probability, each edge is colored with red or green. Prove that $z=6$ is the minimal number of nodes needed to guarantee the existance of a \textbf{monochromatic triangle} (i.e. triangle with all edges the same color). This type of problem is what Ramsey theory studies, which we almost did. 
+\end{problembox}
+In Ramsey theory, this corresponds to the value $R(3, 3)$. Similarly, $R(3, 4)$ is the minimal number of nodes to guarantee a red triangle or green square. Function $R$ obviously generalizes to more colors and shapes. Using Erdos' probabilistic method, Ramsey's theorem (see \cite{sebv} or theorem 3.3 of \cite{van2001course}) says this number is finite but exponential.  This takes us to Erdos' famous quote:
 
 \begin{displayquote}
 Suppose aliens invade earth and threaten to obliterate us within a year unless human beings can find $R(5, 5)$. We could marshal the world's best minds and fastest computers, and within a year we could probably calculate the value. However, if the aliens demanded $R(6, 6)$, we would have no choice but to launch a preemptive attack.
