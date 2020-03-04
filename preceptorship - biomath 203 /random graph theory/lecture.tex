@@ -10,7 +10,7 @@
 \section{Basics of Graph Theory}
 
 \begin{itemize}
-	\item A graph $G$ is a pair of sets $G = (V, E)$ where $V$ is a set of vertices and $E$ is a set of edges where $e \in E$ can be written as $e = (x, y)$ where $x, y \in V$. 
+	\item A graph $G$ is a pair of sets $G = (V, E)$ where $V$ is a set of vertices, $E$ is a set of edges, and $e \in E$ can be written as $e = (x, y)$ with $x, y \in V$. 
 	\item It is comon to represent a graph by \textit{drawing}. Each vertex $v \in V$ is represented as a point in the plane, while edges are lines connecting pairs of points. 
 \end{itemize}
 
@@ -105,7 +105,7 @@ The first term is dominated by $nq$, and
 	\lim_{n \rightarrow \infty} nq 
 	&= \lim_{n \rightarrow \infty} n(1-p)^{n-1} = \lim_{n \rightarrow \infty}  \exp \left\{ \ln(n) + (n-1)\ln(1 - p) \right\}\\
 	&= \lim_{n \rightarrow \infty} \exp \left\{ \ln(n) + (n-1)\ln\left( 1 - \frac{\lambda \ln(n)}{n} \right) \right\}\\
-	&\approx \lim_{n \rightarrow \infty} \exp \left\{ \ln(n) - \lambda\frac{n-1}{n}\ln(n) \right\} \quad (\ln(1 - x) = 1 - x + \frac{x^2}{2}- ... \approx -x + O(x^2) \text{ for small }x)\\
+	&\approx \lim_{n \rightarrow \infty} \exp \left\{ \ln(n) - \lambda\frac{n-1}{n}\ln(n) \right\} \quad \left(\ln(1 + x) = x - \frac{x^2}{2} + \frac{x^3}{3} -... \approx x + O(x^2) \text{ for small }x\right)\\
 	&= \lim_{n \rightarrow \infty} \exp \left\{ \ln(n)\left( 1 - \lambda\frac{n-1}{n} \right) \right\}\\
 	&= \infty \qquad \left(\text{since } \lambda < 1 \text{ and } n \rightarrow \infty \right)
 \end{align*}
@@ -117,7 +117,7 @@ For the second term, observe that $p = \lambda \frac{\ln(n)}{n} \rightarrow 0$ a
 	&= \bigcup_{k=1}^{\lfloor n/2 \rfloor} P(\text{some set of } k \text{ nodes not connected to the rest})\\
 	&\le \sum_{k=1}^{\lfloor n/2 \rfloor} P(\text{some set of } k \text{ nodes not connected to the rest}) \quad (\text{inclusion-exclusion picture})\\
 	&= \sum_{k=1}^{\lfloor n/2 \rfloor} {n \choose k} \left[ (1-p)^{(n - k)} \right]^k\\
-	&\le \sum_{k=1}^{\lfloor n/2 \rfloor} {n \choose k} e^{p(n-k)k} \quad \left(e^{-x} = 1 - x + \frac{x^2}{2} - ... \approx 1 - x + O(x^2) \text{ for small }x\right)\\
+	&\le \sum_{k=1}^{\lfloor n/2 \rfloor} {n \choose k} e^{-p(n-k)k} \quad \left(e^{-x} = 1 - x + \frac{x^2}{2} - ... \approx 1 - x + O(x^2) \text{ for small }x\right)\\
 	&= \sum_{k=1}^{\lfloor n/2 \rfloor} {n \choose k} \exp\left\{\frac{-\lambda \ln(n)(n-k)k}{n}\right\}\\
 	&= \sum_{k=1}^{\lfloor n/2 \rfloor} {n \choose k} n^{\frac{-\lambda}{n}(n-k)k}\\
 	&= \sum_{k=1}^{n^*} {n \choose k} n^{\frac{-\lambda}{n}(n-k)k} + \sum_{k=n^* + 1}^{\lfloor n/2 \rfloor} {n \choose k} n^{\frac{-\lambda}{n}(n-k)k} \quad \left(\text{Choose } n^* s.t. \frac{\lambda(n - n^*)}{n}>1 \iff n^* = \lfloor n(1 - \frac{1}{\lambda}) \rfloor\right)
@@ -126,10 +126,10 @@ For the first term,
 \begin{align*}
 	\sum_{k=1}^{n^*} {n \choose k} n^{\frac{-\lambda}{n}(n-k)k}
 	&\le \sum_{k=1}^{n^*} n^k n^{\frac{-\lambda}{n}(n-k)k} = \sum_{k=1}^{n^*} \left[ n^{1 - \frac{\lambda}{n}(n-k)} \right]^k\\
-	&\le \sum_{k=1}^{n^*} \left[ n^{1 - \frac{\lambda}{n}(n-n^*)} \right]^k \qquad \left(\text{judiciously bound inner} k \text{ with something bigger}\right)\\
+	&\le \sum_{k=1}^{n^*} \left[ n^{1 - \frac{\lambda}{n}(n-n^*)} \right]^k \qquad \left(\text{judiciously bound inner } k \text{ with something bigger}\right)\\
 	&= \sum_{k=1}^{n^*} r^k \qquad \left(\text{define } r = n^{1 - \frac{\lambda}{n}(n-n^*)}\right)\\
 	&= \left(\sum_{k=0}^{n^*} r^k\right) - 1\\
-	&= \frac{r}{1-r} \qquad (\text{geometric series; } 1 - \frac{\lambda}{n}(n-n^*) < 0, \text{ so } r < 1)\\
+	&= \frac{r}{1-r} \qquad \left(\text{geometric series. } r < 1 \text{ since } 1 - \frac{\lambda}{n}(n-n^*) < 0\right)\\
 	&= \frac{1}{n^{\frac{\lambda}{n}(n-n^*) - 1} - 1}\\
 	&\longrightarrow 0 \qquad \left(\text{since } n \rightarrow \infty \text{ and exponent} > 0\right)
 \end{align*}
@@ -141,26 +141,18 @@ Thus
 \begin{align*}
 	\sum_{k=n^* + 1}^{\lfloor n/2 \rfloor} {n \choose k} n^{\frac{-\lambda}{n}(n-k)k} 
 	&< \sum_{k=n^* + 1}^{\lfloor n/2 \rfloor} \left(\frac{en}{k}\right)^k n^{\frac{-\lambda(n-k)k}{n}} = \sum_{k=n^* + 1}^{\lfloor n/2 \rfloor} \left[ \frac{en^{1 - \frac{\lambda(n-k)}{n}}}{k}\right]^k\\
-	&\le \sum_{k=n^* + 1}^{\lfloor n/2 \rfloor} \left[ \frac{en^{1-\frac{\lambda (n - \frac{n}{2})}{n}}}{n^* + 1}\right]^k \qquad (\text{bound inner } k \text{ with something from above})\\
+	&\le \sum_{k=n^* + 1}^{\lfloor n/2 \rfloor} \left[ \frac{en^{1-\frac{\lambda (n - \frac{n}{2})}{n}}}{n^* + 1}\right]^k \qquad (\text{bound inner } k \text{  with something from above})\\
 	&= \sum_{k=n^* + 1}^{\lfloor n/2 \rfloor} \left[\frac{en^{1 - \frac{\lambda}{2}}}{n(1 - \frac{1}{\lambda}) + 1}\right]^k \le \sum_{k=n^* + 1}^{\lfloor n/2 \rfloor} \left[\frac{en^{\frac{-\lambda}{2}}}{1 - \frac{1}{\lambda}}\right]^k\\
 	&\le \sum_{k=n^* + 1}^{\lfloor n/2 \rfloor}  r^k \qquad (r = \frac{en^{\frac{-\lambda}{2}}}{1 - \frac{1}{\lambda}}, 0 < r < 1 \text{ for large }n)\\
 	&\le \sum_{k=n^* + 1}^{\infty}r^k  = \sum_{k=0}^{\infty}r^k - \sum_{k=n^* + 1}^{n^*}r^k\\
-	&= \frac{1}{1-r} - \frac{1-r^{n^*+1}}{1-r} \qquad (\text{finite geometric series} \sum_{k=0}^{m}r^k = \frac{1-r^{m+1}}{1-r})\\
+	&= \frac{1}{1-r} - \frac{1-r^{n^*+1}}{1-r} \qquad \left(\text{finite geometric series} \sum_{k=0}^{m}r^k = \frac{1-r^{m+1}}{1-r}\right)\\
 	&= \frac{r^{n^* + 1}}{1-r} \longrightarrow 0 \qquad \text{since } n^* \rightarrow \infty.
 \end{align*}
 \end{proof}
 
 \section{Clustering graphs}
 
-Sometimes it is useful to \textbf{cluster} a graph, which lumps a graph's nodes into several groups so that there are much more edges within groups than between groups. There are many algorithms to do this (e.g. K-means, hierarchical), which is not our focus. Rather, we will combine random graph theory with (discrete time) Markov chains to define a distance metric that can be used together with various clustering algorithms. Most material is based on \cite{yen2005clustering}. 
-
-%\noindent Motivations for graph clustering::
-%
-%\begin{itemize}
-%	\item Document classification
-%	\item Image segmentation
-%	\item Protein structural integrity: consider a protein where each amino acid residue are nodes. We can cluster the residues to identify protein substructure and/or important residues crucial for the protein's structural or catalytic functions.  
-%\end{itemize}
+Sometimes it is useful to \textbf{cluster} a graph, which lumps a graph's nodes into several groups so that there are much more edges within groups than between groups. There are many algorithms to do this (e.g. K-means, hierarchical), which is not our focus. Rather, we will combine random graph theory with (discrete time) Markov chains to define a new distance measure that can be used together with various clustering algorithms. Most material is based on \cite{yen2005clustering}. 
 
 \subsection{Euclidean distance for clustering in k-means algorithm}
 
@@ -216,7 +208,7 @@ Markov chain setup:
 	\begin{align*}
 		n(i,j) = m(j|i) + m(i|j)
 	\end{align*}
-	is the number of steps a random walker take to enter $j \neq i$ for the first time, then go back to $i$. One can show that this function is a metric. 
+	is the number of steps a random walker take to enter $j \neq i$ for the first time, then go back to $i$. One can show that this function is a distance measure. 
 \end{itemize}
 
 \noindent \textbf{Intuition:} $n(i, j)$ decreases when 2 nodes are highly connected, or when the length of any path decrease. The fact that it takes "connectivity" between nodes into account sets it apart from  shortest path distances.
@@ -250,6 +242,12 @@ See appendix of \cite{fouss2007random}.
 \end{enumerate}
 
 \noindent Here (1) + (2) above implies that $\bL^+$ defines an inner product between $\bx$ and $\by$ as $\langle\bx, \by\rangle = \bx^t\bL^+\by$ in $\R^n$. This induces a norm: $||\bx|| = (\bx^t\bL^+\bx)^{1/2}$. Therefore, the quantity $[n(i, j)]^{1/2}$ is called the \textbf{Euclidean Commute Time} (ETC) \textbf{Distance}. 
+
+\subsubsection{How to compute the pseudoinverse?}
+
+One way to compute the pseudoinverse is to do $\bL^+ = (\bL - \bone\bone^y/n)^{-1} - \bone\bone^t/n$ via sparse (low rank) Cholesky factorization \cite{fouss2007random} (recall Cholesky for $\bA\bx = \bb$ is solved via back substitution: $\bA\bx = \bb \iff \bL\bL^t\bx = \bb \iff \bL^t\bx = \by$ and $\bL\by = \bb$). For large graphs, \citep{yen2005clustering} suggests Markov chain Monte Carlo. \\
+\\
+An alternative is to use iterative methods
 
 \subsection{Revised k-means clustering using ETC Distance}
 
