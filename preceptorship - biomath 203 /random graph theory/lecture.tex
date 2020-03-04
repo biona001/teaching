@@ -140,7 +140,7 @@ For the second term, we use a better bound than before (see homework):
 Thus 
 \begin{align*}
 	\sum_{k=n^* + 1}^{\lfloor n/2 \rfloor} {n \choose k} n^{\frac{-\lambda}{n}(n-k)k} 
-	&\le \sum_{k=n^* + 1}^{\lfloor n/2 \rfloor} \left(\frac{en}{k}\right)^k n^{\frac{-\lambda(n-k)k}{n}} = \sum_{k=n^* + 1}^{\lfloor n/2 \rfloor} \left[ \frac{en^{1 - \frac{\lambda(n-k)}{n}}}{k}\right]^k\\
+	&< \sum_{k=n^* + 1}^{\lfloor n/2 \rfloor} \left(\frac{en}{k}\right)^k n^{\frac{-\lambda(n-k)k}{n}} = \sum_{k=n^* + 1}^{\lfloor n/2 \rfloor} \left[ \frac{en^{1 - \frac{\lambda(n-k)}{n}}}{k}\right]^k\\
 	&\le \sum_{k=n^* + 1}^{\lfloor n/2 \rfloor} \left[ \frac{en^{1-\frac{\lambda (n - \frac{n}{2})}{n}}}{n^* + 1}\right]^k \qquad (\text{bound inner } k \text{ with something from above})\\
 	&= \sum_{k=n^* + 1}^{\lfloor n/2 \rfloor} \left[\frac{en^{1 - \frac{\lambda}{2}}}{n(1 - \frac{1}{\lambda}) + 1}\right]^k \le \sum_{k=n^* + 1}^{\lfloor n/2 \rfloor} \left[\frac{en^{\frac{-\lambda}{2}}}{1 - \frac{1}{\lambda}}\right]^k\\
 	&\le \sum_{k=n^* + 1}^{\lfloor n/2 \rfloor}  r^k \qquad (r = \frac{en^{\frac{-\lambda}{2}}}{1 - \frac{1}{\lambda}}, 0 < r < 1 \text{ for large }n)\\
@@ -212,25 +212,25 @@ Markov chain setup:
 		\end{cases}
 	\end{align*}
 	is the average number of steps a random walker needs to enter state $k$.
-	\item Starting at state $i$, the \textbf{average first passage cost} \begin{align*}		
-		\begin{cases}
-			o(k|k) = 0 \\
-			o(k|i) = \sum_{j=1}^N p_{ij}c(j|i) + \sum_{j=1}^N p_{ij}m(k|j) & \text{if } i\neq k.
-		\end{cases}
-	\end{align*}
-	is the average cost incurred by the random walker to enter state $k$. $c(j|i)$ is the cost of transitioning from $i$ to $j$. Note $m(k|i)$ is a special case of $o(k|i)$ where all $c(j|i) = 1$. 
-	\item Starting at $i$, the \textbf{average commute time} 
+	\item Starting at state $i$, the \textbf{average commute time} 
 	\begin{align*}
 		n(i,j) = m(j|i) + m(i|j)
 	\end{align*}
-	is the number of steps a random walker take to enter $j \neq i$ for the first time, then go back to $i$. One can show that this is a metric. 
+	is the number of steps a random walker take to enter $j \neq i$ for the first time, then go back to $i$. One can show that this function is a metric. 
 \end{itemize}
 
 \noindent \textbf{Intuition:} $n(i, j)$ decreases when 2 nodes are highly connected, or when the length of any path decrease. The fact that it takes "connectivity" between nodes into account sets it apart from  shortest path distances.
 
 \subsection{Euclidean Commute Time (ETC) Distance}
 
-Define the \textbf{adjacency matrix} $\bA = (a_{ij})$ where $a_{ij} = w_{ij}$ if node $i$ is connected to $j$, otherwise $a_{ij} = 0$. Also define $\bD = \text{diag}(a_{i\cdot})$  where $a_{i\cdot} = \sum_{j}a_{ij}$. The \textbf{Laplacian matrix} of the graph is $\bL = \bD - \bA$, which is not full rank because $\bone$ (vector of 1s) is in its null space. Hence the following theorem involves a pseudoinverse $\bL^+$: 
+Define 
+\begin{itemize}
+	\item The \textbf{adjacency matrix} $\bA = (a_{ij})$ where $a_{ij} = w_{ij}$ if node $i$ is connected to $j$, otherwise $a_{ij} = 0$
+	\item $\bD = \text{diag}(a_{i\cdot})$  where $a_{i\cdot} = \sum_{j}a_{ij}$
+	\item The \textbf{Laplacian matrix} of the graph is $\bL = \bD - \bA$
+\end{itemize}
+
+\noindent Note the Laplacian $\bL$ is not full rank because $\bone$ (vector of 1s) is in its null space. Hence the following theorem involves a pseudoinverse $\bL^+$: 
 
 \begin{theorembox}{Computaton of average commute time $n(i, j)$}{}
 We can compute average commute time between nodes $i$ and $j$ by:
@@ -256,8 +256,8 @@ See appendix of \cite{fouss2007random}.
 \begin{enumerate}
 	\item Connect each node to its $h$ nearest neighbors, then add the edges of a minimum spanning tree. Then add weights $w_{ij}$ using your favorite method (e.g. inverse Euclidean distance). 
 	\item Choose number of clusters $k$ and its respective cluster centers $\bp_1,...,\bp_k$ where each $\bp_i$ is a node.
-	\item Assign each node $\bx_i$ to the nearest cluster $C_l$ by finding which of $\bp_1,...,\bp_k$ is closest to $\bx_i$, where closeness is measured by the ETC distance: $\dist(\bx_i, \bp_j) = n(i, j)^2$ 
-	\item Recompute new cluster centers $\bp_1,...,\bp_k$ so by minimizing the within-cluster distance:
+	\item Assign each node $\bx_i$ to the nearest cluster $C_l$ by finding which of $\bp_1,...,\bp_k$ is closest to $\bx_i$, where closeness is measured as a function of the ETC distance: $\dist(\bx_i, \bp_j) = n(i, j)^2$ 
+	\item Recompute new cluster centers $\bp_1,...,\bp_k$ by minimizing the within-cluster distance:
 	\begin{align*}
 		\bp_l = \argmin_{\bx_j} \left\{ \sum_{\bx_k \in C_l}n(k, j)^2 \right\}
 	\end{align*}
@@ -299,7 +299,7 @@ where $\bone$ is a vector of 1s. This is equation (3) in \cite{fouss2007random},
 \begin{problembox}{Colorings of graphs}{}
 Let $K_z$ be a \textbf{complete graph} where all $z \in \Z_+$ nodes forms an edge with every other node. With equal probability, each edge is colored with red or green. Prove that $z=6$ is the minimal number of nodes needed to guarantee the existance of a \textbf{monochromatic triangle} (i.e. triangle with all edges the same color). This type of problem is what Ramsey theory studies, which we almost did. 
 \end{problembox}
-In Ramsey theory, this corresponds to the value $R(3, 3)$. Similarly, $R(3, 4)$ is the minimal number of nodes to guarantee a red triangle or green square. Function $R$ obviously generalizes to more colors and shapes. Using Erdos' probabilistic method, Ramsey's theorem (see \cite{sebv} or theorem 3.3 of \cite{van2001course}) says this number is finite but exponential.  This takes us to Erdos' famous quote:
+We have just shown $R(3, 3) = 6$. Similarly, $R(3, 4)$ is the minimal number of nodes to guarantee a red triangle or green rectangle. Function $R$ obviously generalizes to more colors and shapes. Using Erdos' probabilistic method, Ramsey's theorem (see \cite{sebv} or theorem 3.3 of \cite{van2001course}) says this number is finite but exponential.  This takes us to Erdos' famous quote:
 
 \begin{displayquote}
 Suppose aliens invade earth and threaten to obliterate us within a year unless human beings can find $R(5, 5)$. We could marshal the world's best minds and fastest computers, and within a year we could probably calculate the value. However, if the aliens demanded $R(6, 6)$, we would have no choice but to launch a preemptive attack.
