@@ -166,27 +166,9 @@ Clustering algorithms require some measures of similarity (i.e. distance) betwee
 	\item Repeat 2 and 3 until assignments no longer change
 \end{enumerate}
 
-It is well known that k-means often fail because the Euclidean distance implicitly assumes data has Gaussian shape. Some examples that it fails:
+\subsection{Random Walk and Euclidean Commute Time (ETC) Distance}
 
-\begin{figure}[H]
-  \begin{subfigure}[b]{0.6\textwidth}
-    \includegraphics[width=\textwidth]{figures/shape.png}
-  \end{subfigure}
-  \begin{subfigure}[b]{0.4\textwidth}
-    \includegraphics[width=\textwidth]{figures/shape2.png}
-  \end{subfigure}
-\end{figure}
-
-Figures from
-\begin{itemize}
-	\footnotesize
-	\item \texttt{https://stats.stackexchange.com/questions/133656/how-to-understand-the-drawbacks-of-k-means}
-	\item \texttt{http://i-systems.github.io/HSE545/machine\%20learning\%20all/05\%20Clustering/iSystems\_01\_K-means\_Clustering.html}
-\end{itemize}
-
-\subsection{Random Walk on a Graph is a Markov chain}
-
-Markov chain setup:
+We setup a Markov chain as follows:
 \begin{itemize}
 	\item Consider a connected \textbf{weighted graph} with $N$ nodes where each edge connecting nodes $i$ and $j$ has a weight $w_{ij} > 0$ that is symmetric $w_{ij} = w_{ji}$. 
 	\item Let each node of a graph be a state in a Markov chain. 
@@ -194,15 +176,15 @@ Markov chain setup:
 	\item Connectivity implies the Markov chain is irreducible. 
 \end{itemize}
 
-\noindent Based on this Markov chain, we define 3 important quantities: 
+\noindent Based on this Markov chain, we define 2 important quantities: 
 
 \begin{itemize}
-	\item Starting at state $i$, the \textbf{average first passage time} \begin{align*}		
+	\item Starting at state $i$, the \textbf{average first passage time} \begin{align}\label{eq:m}		
 		\begin{cases}
 			m(k|k) = 0 \\
 			m(k|i) = 1 + \sum_{j=1}^N p_{ij}m(k|j) & \text{if } i\neq k.
 		\end{cases}
-	\end{align*}
+	\end{align}
 	is the average number of steps a random walker needs to enter state $k$.
 	\item Starting at state $i$, the \textbf{average commute time} 
 	\begin{align*}
@@ -211,9 +193,11 @@ Markov chain setup:
 	is the number of steps a random walker take to enter $j \neq i$ for the first time, then go back to $i$. One can show that this function is a distance measure. 
 \end{itemize}
 
-\noindent \textbf{Intuition:} $n(i, j)$ decreases when 2 nodes are highly connected, or when the length of any path decrease. The fact that it takes "connectivity" between nodes into account sets it apart from  shortest path distances.
+\noindent $\sqrt{n(i, j)}$ is called the \textbf{Euclidean Commute Time (ETC) Distance}. Intuitively, $n(i, j)$ decreases when 2 nodes are highly connected, or when the length of any path decrease. The fact that it takes "connectivity" between nodes into account sets it apart from  shortest path distances.
 
-\subsection{Euclidean Commute Time (ETC) Distance}
+\subsection{Computation of Euclidean Commute Time (ETC) Distance}
+
+\subsubsection{Closed form solution involving pseudoinverse}
 
 Define 
 \begin{itemize}
@@ -243,11 +227,17 @@ See appendix of \cite{fouss2007random}.
 
 \noindent Here (1) + (2) above implies that $\bL^+$ defines an inner product between $\bx$ and $\by$ as $\langle\bx, \by\rangle = \bx^t\bL^+\by$ in $\R^n$. This induces a norm: $||\bx|| = (\bx^t\bL^+\bx)^{1/2}$. Therefore, the quantity $[n(i, j)]^{1/2}$ is called the \textbf{Euclidean Commute Time} (ETC) \textbf{Distance}. 
 
-\subsubsection{How to compute the pseudoinverse?}
+\subsubsection{Closed form formula for pseudoinverse}
 
-One way to compute the pseudoinverse is to do $\bL^+ = (\bL - \bone\bone^y/n)^{-1} - \bone\bone^t/n$ via sparse (low rank) Cholesky factorization \cite{fouss2007random} (recall Cholesky for $\bA\bx = \bb$ is solved via back substitution: $\bA\bx = \bb \iff \bL\bL^t\bx = \bb \iff \bL^t\bx = \by$ and $\bL\by = \bb$). For large graphs, \citep{yen2005clustering} suggests Markov chain Monte Carlo. \\
-\\
-An alternative is to use iterative methods
+One way to compute the pseudoinverse is to do $\bL^+ = (\bL - \bone\bone^y/n)^{-1} - \bone\bone^t/n$ via sparse (low rank) Cholesky factorization \cite{fouss2007random} (homework). For large graphs, \citep{yen2005clustering} suggests Markov chain Monte Carlo. 
+
+\subsubsection{Iterative methods for ETC distance}
+
+An alternative is to use iterative methods. Using a more familiar notation, we observe that the recursive relation for $m(k|i)$ in equation \eqref{eq:m} can be interpreted as a matrix-matrix multiplication: 
+\begin{align}\label{eq:iterative}
+m_{ik} = \sum_{j=1}^Np_{ij}m_{jk} + 1 \iff \bM^{(n+1)} = \bP\bM^{(n)} + \left(\bone\bone^t - diag(\bone)\right)
+\end{align}
+If the degree for each node is small, then $\bP$ is a sparse matrix, so the multiplication $\bP\bM^{(n)}$ is linear in the number of non-zero entries. The programming illustrations below uses 50 iterations to estimate $\bM$, which appears to be sufficient for the problems tested.  
 
 \subsection{Revised k-means clustering using ETC Distance}
 
@@ -262,15 +252,30 @@ An alternative is to use iterative methods
 	\item Repeat (2) and (3) until convergence. 
 \end{enumerate}
 
-\noindent This gives the following clustering result:
+\subsection{Some simulations}
+
+It is well known that K-means algorithm assumes Gaussian clusters with the same variance. Below illustrates 2 scenarios, one where k-means is expected to work, another where k-means is expected to fail. Here the graph is formed by connecting each node to 3 of its nearest neighbors with weight equal to the inverse Euclidean distance. Each node $i$ is connected to node $i + 1$ except for the transition node between the 2 clusters. For a better alternative to guarantee connectedness, \cite{yen2005clustering} suggests to add edges from a \textbf{minimal spanning tree} (homework). 
 
 \begin{figure}[H]
-  \begin{subfigure}[b]{0.5\textwidth}
-    \includegraphics[width=\textwidth]{figures/etc_1.png}
+	\centering    
+    \includegraphics[width=0.5\textwidth]{figures/convex.png}
+    \caption{Two unit variance Gaussian clusters with mean -4 and 4.}
+\end{figure}
+
+\begin{figure}[H]
+	\centering    
+    \includegraphics[width=0.5\textwidth]{figures/nonconvex.png}
+    \caption{Two non-convex clusters.}
+\end{figure}
+
+Below compares scalability of the k-means, k-means using closed form pseudoinverse of ETC distance (kmeans-etc), and k-means using the iterative algorithm to estimate ETC distance (kmeans-etc (fast)). One should not take it too seriously because I did not try very hard to optimize this code. 
+
+\begin{figure}[H]
+  \begin{subfigure}[b]{0.45\textwidth}
+    \includegraphics[width=\textwidth]{figures/speed.png}
   \end{subfigure}
-  \quad 
-  \begin{subfigure}[b]{0.4\textwidth}
-    \includegraphics[width=\textwidth]{figures/etc_2.png}
+  \begin{subfigure}[b]{0.45\textwidth}
+    \includegraphics[width=\textwidth]{figures/memory.png}
   \end{subfigure}
 \end{figure}
 
@@ -286,12 +291,20 @@ For integers $n$ and $k$, prove the following inequalities
 which is used in part 2 of our sharp threshold proof. For the strict inequality, rewrite $\frac{n^k}{k!} = \left(\frac{n}{k}\right)^k \frac{k^k}{k!}$ and use Taylor expansion on $e^k$.
 \end{problembox}
 
-\begin{problembox}{}{}
+\begin{problembox}{Verify this unproved claim}{}
 Prove that $\bL^+$ in theorem 3.1 can be computed via
 \begin{align*}
 	\bL^+ = \left(\bL - \frac{ \bone\bone^t }{n}\right)^{-1} + \frac{\bone\bone^t}{n}
 \end{align*}
 where $\bone$ is a vector of 1s. This is equation (3) in \cite{fouss2007random}, but it came without a proof.
+\end{problembox}
+
+\begin{problembox}{Mandatory computational problem}{}
+Starting with my code, do one of the computational problems below: 
+\begin{itemize}
+	\item Compute the pseudoinverse $\bL^+$ via sparse (low rank) Cholesky factorization. Recall Cholesky for $\bA\bx = \bb$ is solved via back substitution: $\bA\bx = \bb \iff \bL\bL^t\bx = \bb \iff \bL^t\bx = \by$ and $\bL\by = \bb$.
+	\item In my code for computing the adjacency matrix $\bA$, use your favorite algorithm to add graph edges corresponding to the \textbf{minimum spanning tree}. Hopefully this solves most of our stability problem. 
+\end{itemize}
 \end{problembox}
 
 \begin{problembox}{Colorings of graphs}{}
