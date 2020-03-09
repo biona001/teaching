@@ -227,17 +227,59 @@ See appendix of \cite{fouss2007random}.
 
 \noindent Here (1) + (2) above implies that $\bL^+$ defines an inner product between $\bx$ and $\by$ as $\langle\bx, \by\rangle = \bx^t\bL^+\by$ in $\R^n$. This induces a norm: $||\bx|| = (\bx^t\bL^+\bx)^{1/2}$. Therefore, the quantity $[n(i, j)]^{1/2}$ is called the \textbf{Euclidean Commute Time} (ETC) \textbf{Distance}. 
 
-\subsubsection{Closed form formula for pseudoinverse}
-
 One way to compute the pseudoinverse is to do $\bL^+ = (\bL - \bone\bone^y/n)^{-1} - \bone\bone^t/n$ via sparse (low rank) Cholesky factorization \cite{fouss2007random} (homework). For large graphs, \citep{yen2005clustering} suggests Markov chain Monte Carlo. 
 
 \subsubsection{Iterative methods for ETC distance}
 
 An alternative is to use iterative methods. Using a more familiar notation, we observe that the recursive relation for $m(k|i)$ in equation \eqref{eq:m} can be interpreted as a matrix-matrix multiplication: 
 \begin{align}\label{eq:iterative}
-m_{ik} = \sum_{j=1}^Np_{ij}m_{jk} + 1 \iff \bM^{(n+1)} = \bP\bM^{(n)} + \left(\bone\bone^t - diag(\bone)\right)
+m_{ik} = \sum_{j=1}^Np_{ij}m_{jk} + 1 \iff \begin{cases}
+	\bM^{(n+1)} = \bP\bM^{(n)} + \bone\bone^t\\
+	diag(\bM^{(n+1)}) = \bzero
+\end{cases}
 \end{align}
-If the degree for each node is small, then $\bP$ is a sparse matrix, so the multiplication $\bP\bM^{(n)}$ is linear in the number of non-zero entries. The programming illustrations below uses 50 iterations to estimate $\bM$, which appears to be sufficient for the problems tested.  
+
+\noindent There are many virtues to this recurrence relations: 
+\begin{itemize}
+	\item If the degree for each node is small, then $\bP$ is a sparse matrix, so the multiplication $\bP\bM^{(n)}$ is linear in the number of non-zero entries
+	\item It maintains correct diagonal entries
+	\item It is monotonic in the sense that $\bM^{(n + 1)} \geq \bM^{(n)}$ elementwise
+	\item It converges to the minimal solution of the equations. 
+\end{itemize}
+
+\noindent We prove monotonicity and convergence below.
+
+\begin{theorembox}{Properties of the iterative formula}{}
+Let $T_{ik}$ be a random variable that counts the number of steps taken to reach $k$ from $i$, that is, $E(T_{ij}) = m_{ij}$. Initialize $\bM$ to be a matrix of $0$'s. Then the iteration in equation \eqref{eq:iterative} satisfies:
+\begin{enumerate}
+	\item $0 \le m_{ik}^{(1)} \le ... \le m_{ik}^{(n)} \le m_{ik}^{\rm true}$
+	\item $\lim_{n \rightarrow \infty} m_{ik}^{(n)} = m_{ik}^{\rm true}$
+	\item The iterate $m_{ij}^{(n)}$ equals $E(T_{ij}1_{\{T_{ij}\le n\}}$ and converges to $E(T_{ij})$ whenever the latter is finite. 
+\end{enumerate}
+\end{theorembox}
+
+\begin{proof}
+The first claim uses induction. For the base case, we initialize $m_{ij}^{(0)} = 0$. Thus
+\begin{align*}
+	m_{ik}^{(1)} 
+	&= 1 + \sum_{j\neq i}^{N} p_{ij}m_{jk}^{(0)} = 
+	\begin{cases}
+		1 & \text{off diagonal (i.e. } k = i)\\
+		0 & \text{on diagonal (i.e. } k \neq i)
+	\end{cases}\\
+	m_{ik}^{(2)} 
+	&= 1 + \sum_{j\neq i}^{N} p_{ij} m_{jk}^{(1)} \ge 1 \ge m_{ik}^{(1)}.
+\end{align*} 
+Now assume $m_{ik}^{(n-1)} \ge m_{ik}^{(n-2)}$, we want to show $m_{ik}^{(n)} \ge m_{ik}^{(n-1)}$. But this is clear: 
+\begin{align*}
+	m_{ik}^{(n)} = 1 + \sum_{j\neq i}^{N} p_{ij} m_{jk}^{(n - 1)} \geq  1 + \sum_{j\neq i}^{N} p_{ij} m_{jk}^{(n-2)} = 	m_{ik}^{(n - 1)}.
+\end{align*}
+To show the sequence is upper bounded, suppose $\bM = (m_{ij})$ solves the system of equations such that $m_{ik} \ge m_{ik}^{(n - 1)}.$ Then again by induction, we have
+\begin{align*}
+	m_{ik} = 1 + \sum_{j \neq i}^{N}p_{ij}m_{jk} \ge 1 + \sum_{j\neq i}^N p_{ij} m_{jk}^{(n-1)} = m_{ik}^{(n)}.
+\end{align*}
+The second claim follows from the monotone convergence theorem, since $m_{ik}^{(n)}$ is monotonically increasing in $n$ and upper bounded by $m_{ik}$. 
+\end{proof}
 
 \subsection{Revised k-means clustering using ETC Distance}
 
@@ -249,7 +291,7 @@ If the degree for each node is small, then $\bP$ is a sparse matrix, so the mult
 	\begin{align*}
 		\bp_l = \argmin_{\bx_j} \left\{ \sum_{\bx_k \in C_l}n(k, j)^2 \right\}
 	\end{align*}
-	\item Repeat (2) and (3) until convergence. 
+	\item Repeat (3) and (4) until convergence. 
 \end{enumerate}
 
 \subsection{Some simulations}
@@ -310,7 +352,7 @@ Starting with my code, do one of the computational problems below:
 \begin{problembox}{Colorings of graphs}{}
 Let $K_z$ be a \textbf{complete graph} where all $z \in \Z_+$ nodes forms an edge with every other node. With equal probability, each edge is colored with red or green. Prove that $z=6$ is the minimal number of nodes needed to guarantee the existance of a \textbf{monochromatic triangle} (i.e. triangle with all edges the same color). This type of problem is what Ramsey theory studies, which we almost did. 
 \end{problembox}
-We have just shown $R(3, 3) = 6$. Similarly, $R(3, 4)$ is the minimal number of nodes to guarantee a red triangle or green rectangle. Function $R$ obviously generalizes to more colors and shapes. Using Erdos' probabilistic method, Ramsey's theorem (see \cite{sebv} or theorem 3.3 of \cite{van2001course}) says this number is finite but exponential.  This takes us to Erdos' famous quote:
+We have just shown $R(3, 3) = 6$. Similarly, $R(3, 4)$ is the minimal number of nodes to guarantee a red triangle or complete green rectangle (i.e. green $K_4)$. Function $R$ obviously generalizes to more colors and shapes. Using Erdos' probabilistic method, Ramsey's theorem (see \cite{sebv} or theorem 3.3 of \cite{van2001course}) says this number is finite but exponential.  This takes us to Erdos' famous quote:
 
 \begin{displayquote}
 Suppose aliens invade earth and threaten to obliterate us within a year unless human beings can find $R(5, 5)$. We could marshal the world's best minds and fastest computers, and within a year we could probably calculate the value. However, if the aliens demanded $R(6, 6)$, we would have no choice but to launch a preemptive attack.

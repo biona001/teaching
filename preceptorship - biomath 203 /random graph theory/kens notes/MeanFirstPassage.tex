@@ -1,0 +1,185 @@
+\documentclass[11pt]{article}
+\usepackage{amsfonts,amsmath,amssymb,amsthm}
+\usepackage{amsbsy, amsmath,amsfonts}
+\usepackage{graphicx,url}
+\newtheorem{proposition}{Proposition}[section]
+\newtheorem{example}{Example}[section]
+\newcommand{\svskip}{\vspace{1.75mm}}
+\newcommand{\mvskip}{\vspace{.25in}}
+\newcommand{\lvskip}{\vspace{.5in}}
+\def\E{\mathop{\rm E\,\!}\nolimits}
+\def\Var{\mathop{\rm Var}\nolimits}
+\def\Cov{\mathop{\rm Cov}\nolimits}
+\def\den{\mathop{\rm den}\nolimits}
+\def\midd{\mathop{\,|\,}\nolimits}
+\def\sgn{\mathop{\rm sgn}\nolimits}
+\def\vec{\mathop{\rm vec}\nolimits}
+\def\sinc{\mathop{\rm sinc}\nolimits}
+\def\curl{\mathop{\rm curl}\nolimits}
+\def\div{\mathop{\rm div}\nolimits}
+\def\tr{\mathop{\rm tr}\nolimits}
+\def\len{\mathop{\rm len}\nolimits}
+\def\diag{\mathop{\rm diag}\nolimits}
+\def\amp{\mathop{\;\:}\nolimits}
+\newcommand{\ba}{\boldsymbol{a}}
+\newcommand{\bb}{\boldsymbol{b}}
+\newcommand{\bc}{\boldsymbol{c}}
+\newcommand{\bd}{\boldsymbol{d}}
+\newcommand{\be}{\boldsymbol{e}}
+\newcommand{\bff}{\boldsymbol{f}}
+\newcommand{\bg}{\boldsymbol{g}}
+\newcommand{\bh}{\boldsymbol{h}}
+\newcommand{\bi}{\boldsymbol{i}}
+\newcommand{\bj}{\boldsymbol{j}}
+\newcommand{\bk}{\boldsymbol{k}}
+\newcommand{\bl}{\boldsymbol{l}}
+\newcommand{\bm}{\boldsymbol{m}}
+\newcommand{\bn}{\boldsymbol{n}}
+\newcommand{\bo}{\boldsymbol{o}}
+\newcommand{\bp}{\boldsymbol{p}}
+\newcommand{\bq}{\boldsymbol{q}}
+\newcommand{\br}{\boldsymbol{r}}
+\newcommand{\bs}{\boldsymbol{s}}
+\newcommand{\bt}{\boldsymbol{t}}
+\newcommand{\bu}{\boldsymbol{u}}
+\newcommand{\bv}{\boldsymbol{v}}
+\newcommand{\bw}{\boldsymbol{w}}
+\newcommand{\bx}{\boldsymbol{x}}
+\newcommand{\by}{\boldsymbol{y}}
+\newcommand{\bz}{\boldsymbol{z}}
+\newcommand{\bA}{\boldsymbol{A}}
+\newcommand{\bB}{\boldsymbol{B}}
+\newcommand{\bC}{\boldsymbol{C}}
+\newcommand{\bD}{\boldsymbol{D}}
+\newcommand{\bE}{\boldsymbol{E}}
+\newcommand{\bF}{\boldsymbol{F}}
+\newcommand{\bG}{\boldsymbol{G}}
+\newcommand{\bH}{\boldsymbol{H}}
+\newcommand{\bI}{\boldsymbol{I}}
+\newcommand{\bJ}{\boldsymbol{J}}
+\newcommand{\bK}{\boldsymbol{K}}
+\newcommand{\bL}{\boldsymbol{L}}
+\newcommand{\bM}{\boldsymbol{M}}
+\newcommand{\bN}{\boldsymbol{N}}
+\newcommand{\bO}{\boldsymbol{O}}
+\newcommand{\bP}{\boldsymbol{P}}
+\newcommand{\bQ}{\boldsymbol{Q}}
+\newcommand{\bR}{\boldsymbol{R}}
+\newcommand{\bS}{\boldsymbol{S}}
+\newcommand{\bT}{\boldsymbol{T}}
+\newcommand{\bU}{\boldsymbol{U}}
+\newcommand{\bV}{\boldsymbol{V}}
+\newcommand{\bW}{\boldsymbol{W}}
+\newcommand{\bX}{\boldsymbol{X}}
+\newcommand{\bY}{\boldsymbol{Y}}
+\newcommand{\bZ}{\boldsymbol{Z}}
+\newcommand{\balpha}{\boldsymbol{\alpha}}
+\newcommand{\bbeta}{\boldsymbol{\beta}}
+\newcommand{\bgamma}{\boldsymbol{\gamma}}
+\newcommand{\bdelta}{\boldsymbol{\delta}}
+\newcommand{\bepsilon}{\boldsymbol{\epsilon}}
+\newcommand{\blambda}{\boldsymbol{\lambda}}
+\newcommand{\bmu}{\boldsymbol{\mu}}
+\newcommand{\bnu}{\boldsymbol{\nu}}
+\newcommand{\bphi}{\boldsymbol{\phi}}
+\newcommand{\bpi}{\boldsymbol{\pi}}
+\newcommand{\bsigma}{\boldsymbol{\sigma}}
+\newcommand{\btheta}{\boldsymbol{\theta}}
+\newcommand{\bomega}{\boldsymbol{\omega}}
+\newcommand{\bxi}{\boldsymbol{\xi}}
+\newcommand{\bGamma}{\boldsymbol{\Gamma}}
+\newcommand{\bDelta}{\boldsymbol{\Delta}}
+\newcommand{\bTheta}{\boldsymbol{\Theta}}
+\newcommand{\bLambda}{\boldsymbol{\Lambda}}
+\newcommand{\bXi}{\boldsymbol{\Xi}}
+\newcommand{\bPi}{\boldsymbol{\Pi}}
+\newcommand{\bSigma}{\boldsymbol{\Sigma}}
+\newcommand{\bUpsilon}{\boldsymbol{\Upsilon}}
+\newcommand{\bPhi}{\boldsymbol{\Phi}}
+\newcommand{\bPsi}{\boldsymbol{\Psi}}
+\newcommand{\bOmega}{\boldsymbol{\Omega}}
+
+\pagenumbering{gobble}
+
+\title{Computation of Mean First Passage Times in a Markov Chain}
+\author{Kenneth Lange
+\\
+\\
+\\
+Departments of Computational Medicine, \\
+Human Genetics, and Statistics \\
+University of California \\
+Los Angeles, CA 90095\\
+Phone: 310-206-8076 \\
+E-mail klange@ucla.edu \\
+\\
+\\
+\\
+\\
+Research supported in part by USPHS grants GM53275 and HG006139.}
+
+\begin{document}
+\maketitle
+%\newpage
+%\begin{abstract}
+
+\noindent  \\ \\
+\lvskip
+%\noindent {\bf Key Words:} 
+
+%\end{abstract}
+
+\newpage
+\pagenumbering{arabic}
+
+\baselineskip=20pt
+
+\section*{\center Introduction}
+
+Let $\bP=(p_{ij})$ be the transition probability matrix of a finite
+state Markov chain. The first passage time $T_{ij}$ is the number
+number of steps it takes to reach $j$ starting from $i$. We will
+assume all $p_{ii} =0$ and set $T_{ii}=0$ in contrast to the standard first passage time formulation. Let $m_{ij}=\E(T_{ij})$ be the expected value of $T_{ij}$ and collect the $m_{ij}$
+into a matrix $\bM$. One can calculate the $m_{ij}$ recursively via
+the system of equations
+\begin{eqnarray*}
+m_{ij} & = & 1 + \sum_{k}p_{ik}m_{kj}
+\end{eqnarray*}
+for all $j\ne i$. It is natural to solve this equation iteratively via the recurrence
+\begin{eqnarray*}
+\bM^{(n+1)} & = & \bP\bM^{(n)} + {\bf 1} \\
+\diag(\bM^{(n+1}) & = & {\bf 0}
+\end{eqnarray*}
+starting from $\bM^{(0)}={\bf 0}$. This recurrence has several
+advantages: (a) it exploits fast matrix times matrix multiplication,
+(b) it correctly maintains the diagonal entries, (c) it is monotonic in the sense that $\bM^{(n+1)} \ge \bM^{(n)}$ for all $n$, and (d) it converges to the minimal solution of the equations. Monotonicity follows by induction from the form of the updates and the
+obvious condition $\bM^{(1)} \ge \bM^{(0)}$. It is also clear by induction that if $\bM$ solves the system of equations, then $\bM \ge \bM^{(n)}$ for all $n$. In view of this bound, the monotonic sequence 
+$\bM^{(n)}$ converges to a limit $\bM^{(\infty)} \le \bM$.
+
+\begin{proposition}
+The iterate $m_{ij}^{(n)}$ equals $\E(T_{ij}1_{\{T_{ij}\le n\}})$
+and converges to $\E(T_{ij})$ whenever the latter is finite.
+\end{proposition}
+\begin{proof}
+This identification is clearly true for $n=0$. Suppose $n>0$ and $T_{kj}'$ is a probabilistic replicate of $T_{kj}$. If $X_1$ denotes the state of the
+chain after one step starting at $X_0=i$, then
+\begin{eqnarray*}
+m_{ij}^{(n+1)} & = & \E(T_{ij}1_{\{T_{ij}\le n+1\}}) \\
+& = & \sum_{k} p_{ik} 
+\E(T_{ij}1_{\{T_{ij}\le n+1\}} \mid X_1 = k) \\
+& = & \sum_{k} p_{ik} 
+\E\Big[(T_{kj}'+1)1_{\{T_{kj}'+1\le n+1\}}\Big] \\
+& = & 1+ \sum_{k} p_{ik}\E(T_{kj}'1_{\{T_{kj}'\le n\}})\\
+& = & 1+ \sum_{k} p_{ik}m_{kj}^{(n)}
+\end{eqnarray*}
+proves our first claim. The monotone convergence theorem implies that 
+$m_{ij}^{(n)}$ converges to $\E(T_{ij})$ given the later is finite.
+\end{proof} 
+
+
+\begin{thebibliography}{99}
+\bibitem{langeapplied2010}
+Lange, K (2010) {\it Applied Probability}, 2nd ed. Springer
+\end{thebibliography}
+
+\end{document}
