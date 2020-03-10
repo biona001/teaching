@@ -7,6 +7,12 @@
 
 \singlespacing
 
+\noindent The electronic version of this document is available at:
+\begin{align*}
+\texttt{https://github.com/biona001/teaching}
+\end{align*}
+under \texttt{preceptorship - biomath 203/random graph theory}. Code for chapter 3 is available as \texttt{kmeans.ipynb} for running the accompanying Julia code. If you do not know how to use Jupyter notebooks, you can view the code and figures from the accompanying \texttt{kmeans.html} file. 
+
 \section{Basics of Graph Theory}
 
 \begin{itemize}
@@ -52,7 +58,7 @@ Most materials for this section note is taken from \cite{Acemoglu, Ramchandran}.
 
 \noindent \textbf{Q2. What is the probability that node 1 and node 2 are both isolated?} \textbf{Ans:} Let $I_1, I_2$ be the indicator that node 1 and node 2 are isolated. Then $P(I_1 \cap I_2) = P(I_1)P(I_2 \ | \ I_1)  = (1-p)^{n-1} * (1 - p)^{n - 2} = (1 - p)^{2n-3}$. 
 
-\noindent \textbf{Q3. What is the probability that a group of $k$ nodes do not connect to the rest of the $n-k$ nodes?} \textbf{Ans:} There are ${n \choose k}$ number of ways to choose $k$ vertices. Each of these cannot form an edge with the remaining $n-k$ nodes independently with probability $(1-p)^{n-k}$. So overall we have $(1-p)^{(n-k)k}$. \\
+\noindent \textbf{Q3. What is the probability that a group of $k$ nodes do not connect to the rest of the $n-k$ nodes?} \textbf{Ans:} There are ${n \choose k}$ number of ways to choose $k$ vertices. Each of these cannot form an edge with the remaining $n-k$ nodes independently with probability $(1-p)^{n-k}$. So overall we have ${n \choose k} (1-p)^{(n-k)k}$. \\
 
 \begin{theorembox}{Erdos-Renyi 1961}{}
 Consider a graph $g \sim G(n, p(n))$ where $p(n) = \lambda \frac{\ln(n)}{n}$. Then as $n \rightarrow \infty$,
@@ -72,7 +78,7 @@ Suppose $\lambda < 1$. Since $P(\text{connected}) = 1 - P(\text{disconnected})$,
 We want to show $P(X_n > 0) \rightarrow 1$, or equivalently, $P(X_n = 0) \rightarrow 0$. To get a bound on $P(X_n = 0)$, we observe:
 \begin{align*}
 	\Var(X_n) 
-	&= E\left(X_n - E(X_n)\right)\\
+	&= E\left[(X_n - E(X_n))^2\right]\\
 	&= P(X_n = 0)(0 - E(X_n)^2 + P(X_n = 1)(1 - E(X_n))^2 + ...\\
 	&\ge P(X_n = 0)E(X_n)^2.
 \end{align*}
@@ -144,7 +150,7 @@ Thus
 	&\le \sum_{k=n^* + 1}^{\lfloor n/2 \rfloor} \left[ \frac{en^{1-\frac{\lambda (n - \frac{n}{2})}{n}}}{n^* + 1}\right]^k \qquad (\text{bound inner } k \text{  with something from above})\\
 	&= \sum_{k=n^* + 1}^{\lfloor n/2 \rfloor} \left[\frac{en^{1 - \frac{\lambda}{2}}}{n(1 - \frac{1}{\lambda}) + 1}\right]^k \le \sum_{k=n^* + 1}^{\lfloor n/2 \rfloor} \left[\frac{en^{\frac{-\lambda}{2}}}{1 - \frac{1}{\lambda}}\right]^k\\
 	&\le \sum_{k=n^* + 1}^{\lfloor n/2 \rfloor}  r^k \qquad (r = \frac{en^{\frac{-\lambda}{2}}}{1 - \frac{1}{\lambda}}, 0 < r < 1 \text{ for large }n)\\
-	&\le \sum_{k=n^* + 1}^{\infty}r^k  = \sum_{k=0}^{\infty}r^k - \sum_{k=n^* + 1}^{n^*}r^k\\
+	&\le \sum_{k=n^* + 1}^{\infty}r^k  = \sum_{k=0}^{\infty}r^k - \sum_{k=0}^{n^*}r^k\\
 	&= \frac{1}{1-r} - \frac{1-r^{n^*+1}}{1-r} \qquad \left(\text{finite geometric series} \sum_{k=0}^{m}r^k = \frac{1-r^{m+1}}{1-r}\right)\\
 	&= \frac{r^{n^* + 1}}{1-r} \longrightarrow 0 \qquad \text{since } n^* \rightarrow \infty.
 \end{align*}
@@ -231,7 +237,7 @@ One way to compute the pseudoinverse is to do $\bL^+ = (\bL - \bone\bone^y/n)^{-
 
 \subsubsection{Iterative methods for ETC distance}
 
-An alternative is to use iterative methods. Using a more familiar notation, we observe that the recursive relation for $m(k|i)$ in equation \eqref{eq:m} can be interpreted as a matrix-matrix multiplication: 
+An alternative is to use iterative methods. Observe that the recursive relation for $m(k|i)$ in equation \eqref{eq:m} can be interpreted as a matrix-matrix multiplication: 
 \begin{align}\label{eq:iterative}
 m_{ik} = \sum_{j=1}^Np_{ij}m_{jk} + 1 \iff \begin{cases}
 	\bM^{(n+1)} = \bP\bM^{(n)} + \bone\bone^t\\
@@ -250,11 +256,11 @@ m_{ik} = \sum_{j=1}^Np_{ij}m_{jk} + 1 \iff \begin{cases}
 \noindent We prove monotonicity and convergence below.
 
 \begin{theorembox}{Properties of the iterative formula}{}
-Let $T_{ik}$ be a random variable that counts the number of steps taken to reach $k$ from $i$, that is, $E(T_{ij}) = m_{ij}$. Initialize $\bM$ to be a matrix of $0$'s. Then the iteration in equation \eqref{eq:iterative} satisfies:
+Let $T_{ik}$ be a random variable that counts the number of steps taken to reach $k$ from $i$, that is, $E(T_{ik}) = m_{ik}$. Initialize $\bM$ to be a matrix of $0$'s. Then the iteration in equation \eqref{eq:iterative} satisfies:
 \begin{enumerate}
 	\item $0 \le m_{ik}^{(1)} \le ... \le m_{ik}^{(n)} \le m_{ik}^{\rm true}$
 	\item $\lim_{n \rightarrow \infty} m_{ik}^{(n)} = m_{ik}^{\rm true}$
-	\item The iterate $m_{ij}^{(n)}$ equals $E(T_{ij}1_{\{T_{ij}\le n\}}$ and converges to $E(T_{ij})$ whenever the latter is finite. 
+	\item The iterate $m_{ij}^{(n)}$ equals $E(T_{ij}1_{\{T_{ij} \le n\}})$ and converges to $E(T_{ij})$ whenever the latter is finite. 
 \end{enumerate}
 \end{theorembox}
 
@@ -278,7 +284,18 @@ To show the sequence is upper bounded, suppose $\bM = (m_{ij})$ solves the syste
 \begin{align*}
 	m_{ik} = 1 + \sum_{j \neq i}^{N}p_{ij}m_{jk} \ge 1 + \sum_{j\neq i}^N p_{ij} m_{jk}^{(n-1)} = m_{ik}^{(n)}.
 \end{align*}
-The second claim follows from the monotone convergence theorem, since $m_{ik}^{(n)}$ is monotonically increasing in $n$ and upper bounded by $m_{ik}$. 
+\textbf{Part (2).} The second claim follows from the monotone convergence theorem, since $m_{ik}^{(n)}$ is monotonically increasing in $n$ and upper bounded by $m_{ik}$. \\
+\\
+\textbf{Part (3).} For the last point, note that the case for $n = 0$ is true since $m_{ii}^{(0)} = T_{ii} = 0$. If we start from $X_0 = i$ and transition to $X_1 = j$ in the first step, we have
+\begin{align*}
+	m_{ik}^{(n + 1)} 
+	&= E\left( T_{ik} 1_{\{T_{ik} \le n + 1\}} \right)\\
+	&= \sum_{j} p_{ij} E\left( T_{ik} 1_{\{T_{ik} \le n + 1\}} \ \big| \ X_1 = j\right) \quad (\text{law of total expectation})\\
+	&= \sum_{j} p_{ij} E\left( (T_{jk}' + 1) 1_{T_{jk}' + 1 \le n + 1} \right)\\
+	&= 1 + \sum_{j} p_{ij} E\left( T_{jk}' 1_{T_{jk}' \le n} \right)\\
+	&= 1 + \sum_{j}p_{ij}m_{jk}^{(n)}.
+\end{align*} 
+The monotone convergence theorem again implies that $m_{ij}^{(n)}$ converges to $E(T_{ij})$ given the later is finite. 
 \end{proof}
 
 \subsection{Revised k-means clustering using ETC Distance}
@@ -296,7 +313,7 @@ The second claim follows from the monotone convergence theorem, since $m_{ik}^{(
 
 \subsection{Some simulations}
 
-It is well known that K-means algorithm assumes Gaussian clusters with the same variance. Below illustrates 2 scenarios, one where k-means is expected to work, another where k-means is expected to fail. Here the graph is formed by connecting each node to 3 of its nearest neighbors with weight equal to the inverse Euclidean distance. Each node $i$ is connected to node $i + 1$ except for the transition node between the 2 clusters. For a better alternative to guarantee connectedness, \cite{yen2005clustering} suggests to add edges from a \textbf{minimal spanning tree} (homework). 
+It is well known that K-means algorithm assumes Gaussian clusters with the same variance. Below illustrates 2 scenarios, one with 2 Gaussian clusters, another with non-convex clusters. Here the graph is formed by connecting each node to 3 of its nearest neighbors. Also, each node $i$ is connected to node $i + 1$ except for the transition node between the 2 clusters. Edge weights are chosen to be equal to the inverse Euclidean distance $w_{ij} = \frac{1}{\rm euclidean(\bx_i, \bx_j)}.$
 
 \begin{figure}[H]
 	\centering    
@@ -344,8 +361,8 @@ where $\bone$ is a vector of 1s. This is equation (3) in \cite{fouss2007random},
 \begin{problembox}{Mandatory computational problem}{}
 Starting with my code, do one of the computational problems below: 
 \begin{itemize}
-	\item Compute the pseudoinverse $\bL^+$ via sparse (low rank) Cholesky factorization. Recall Cholesky for $\bA\bx = \bb$ is solved via back substitution: $\bA\bx = \bb \iff \bL\bL^t\bx = \bb \iff \bL^t\bx = \by$ and $\bL\by = \bb$.
-	\item In my code for computing the adjacency matrix $\bA$, use your favorite algorithm to add graph edges corresponding to the \textbf{minimum spanning tree}. Hopefully this solves most of our stability problem. 
+	\item Compute the pseudoinverse $\bL^+$ via Cholesky factorization. Recall Cholesky for $\bA\bx = \bb$ is solved via back substitution: $\bA\bx = \bb \iff \bL\bL^t\bx = \bb \iff \bL^t\bx = \by$ and $\bL\by = \bb$. Solving for $\by$ is easy because $\bL$ is lower triangular. 
+	\item Recall that my code adds edges between nodes $i$ and $i+1$ as an adhoc tatic for making the graph connected. For a better alternative, \cite{yen2005clustering} suggests to add edges from a \textbf{minimal spanning tree}. In my code for computing the adjacency matrix $\bA$, compute the edges from a minimal spanning tree using your favoriate algorithm. Hopefully this solves most of our stability problem. 
 \end{itemize}
 \end{problembox}
 
