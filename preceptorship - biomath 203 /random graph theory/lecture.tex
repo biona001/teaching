@@ -58,7 +58,7 @@ Most materials for this section note is taken from \cite{Acemoglu, Ramchandran}.
 
 \noindent \textbf{Q2. What is the probability that node 1 and node 2 are both isolated?} \textbf{Ans:} Let $I_1, I_2$ be the indicator that node 1 and node 2 are isolated. Then $P(I_1 \cap I_2) = P(I_1)P(I_2 \ | \ I_1)  = (1-p)^{n-1} * (1 - p)^{n - 2} = (1 - p)^{2n-3}$. 
 
-\noindent \textbf{Q3. What is the probability that a group of $k$ nodes do not connect to the rest of the $n-k$ nodes?} \textbf{Ans:} There are ${n \choose k}$ number of ways to choose $k$ vertices. Each of these cannot form an edge with the remaining $n-k$ nodes independently with probability $(1-p)^{n-k}$. So overall we have ${n \choose k} (1-p)^{(n-k)k}$. \\
+\noindent \textbf{Q3. What is the probability that a specific set of $k$ nodes is not connected to the rest?} \textbf{Ans:} Given the $k$ nodes, each of them cannot connect to the remaining $n-k$ nodes with probability $(1 - p)^{n - k}$. Sp the answer is $(1 - p)^{(n - k)k}$ \\
 
 \begin{theorembox}{Erdos-Renyi 1961}{}
 Consider a graph $g \sim G(n, p(n))$ where $p(n) = \lambda \frac{\ln(n)}{n}$. Then as $n \rightarrow \infty$,
@@ -79,7 +79,7 @@ We want to show $P(X_n > 0) \rightarrow 1$, or equivalently, $P(X_n = 0) \righta
 \begin{align*}
 	\Var(X_n) 
 	&= E\left[(X_n - E(X_n))^2\right]\\
-	&= P(X_n = 0)(0 - E(X_n)^2 + P(X_n = 1)(1 - E(X_n))^2 + ...\\
+	&= P(X_n = 0)(0 - E(X_n))^2 + P(X_n = 1)(1 - E(X_n))^2 + ...\\
 	&\ge P(X_n = 0)E(X_n)^2.
 \end{align*}
 Thus 
@@ -120,8 +120,9 @@ For the second term, observe that $p = \lambda \frac{\ln(n)}{n} \rightarrow 0$ a
 \textbf{Part II.} Now suppose $\lambda > 1$. We want to show $P(\text{connected})\rightarrow 1,$ or equivalently $P(\text{disconnected})\rightarrow 0$. A graph is disconnected if there is a subgraph of $k$ nodes that does not connect to any of the other $n - k$ nodes (draw a picture). By symmetry, we only have to consider $k \in \{1, 2, ... \lfloor n/2 \rfloor\}$.  So 
 \begin{align*}
 	P(\text{disconnected}) 
-	&= \bigcup_{k=1}^{\lfloor n/2 \rfloor} P(\text{some set of } k \text{ nodes not connected to the rest})\\
+	&= P\left(\bigcup_{k=1}^{\lfloor n/2 \rfloor}  \text{some set of } k \text{ nodes not connected to the rest}\right)\\
 	&\le \sum_{k=1}^{\lfloor n/2 \rfloor} P(\text{some set of } k \text{ nodes not connected to the rest}) \quad (\text{inclusion-exclusion picture})\\
+	&\le \sum_{k=1}^{\lfloor n/2 \rfloor} {n \choose k} P(\text{a specific set of } k \text{ nodes not connected to the rest})\\
 	&= \sum_{k=1}^{\lfloor n/2 \rfloor} {n \choose k} \left[ (1-p)^{(n - k)} \right]^k\\
 	&\le \sum_{k=1}^{\lfloor n/2 \rfloor} {n \choose k} e^{-p(n-k)k} \quad \left(e^{-x} = 1 - x + \frac{x^2}{2} - ... \approx 1 - x + O(x^2) \text{ for small }x\right)\\
 	&= \sum_{k=1}^{\lfloor n/2 \rfloor} {n \choose k} \exp\left\{\frac{-\lambda \ln(n)(n-k)k}{n}\right\}\\
@@ -141,7 +142,7 @@ For the first term,
 \end{align*}
 For the second term, we use a better bound than before (see homework):
 \begin{align*}
-	{n \choose k} < \left(\frac{ek}{k}\right)^k.
+	{n \choose k} < \left(\frac{en}{k}\right)^k.
 \end{align*}
 Thus 
 \begin{align*}
@@ -196,7 +197,7 @@ We setup a Markov chain as follows:
 	\begin{align*}
 		n(i,j) = m(j|i) + m(i|j)
 	\end{align*}
-	is the number of steps a random walker take to enter $j \neq i$ for the first time, then go back to $i$. One can show that this function is a distance measure. 
+	is the average number of steps a random walker take to enter $j \neq i$ for the first time, then go back to $i$. One can show that this function is a distance measure. 
 \end{itemize}
 
 \noindent $\sqrt{n(i, j)}$ is called the \textbf{Euclidean Commute Time (ETC) Distance}. Intuitively, $n(i, j)$ decreases when 2 nodes are highly connected, or when the length of any path decrease. The fact that it takes "connectivity" between nodes into account sets it apart from  shortest path distances.
