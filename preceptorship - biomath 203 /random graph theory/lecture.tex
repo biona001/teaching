@@ -127,7 +127,8 @@ For the second term, observe that $p = \lambda \frac{\ln(n)}{n} \rightarrow 0$ a
 	&\le \sum_{k=1}^{\lfloor n/2 \rfloor} {n \choose k} e^{-p(n-k)k} \quad \left(e^{-x} = 1 - x + \frac{x^2}{2} - ... \approx 1 - x + O(x^2) \text{ for small }x\right)\\
 	&= \sum_{k=1}^{\lfloor n/2 \rfloor} {n \choose k} \exp\left\{\frac{-\lambda \ln(n)(n-k)k}{n}\right\}\\
 	&= \sum_{k=1}^{\lfloor n/2 \rfloor} {n \choose k} n^{\frac{-\lambda}{n}(n-k)k}\\
-	&= \sum_{k=1}^{n^*} {n \choose k} n^{\frac{-\lambda}{n}(n-k)k} + \sum_{k=n^* + 1}^{\lfloor n/2 \rfloor} {n \choose k} n^{\frac{-\lambda}{n}(n-k)k} \quad \left(\text{Choose } n^* s.t. \frac{\lambda(n - n^*)}{n}>1 \iff n^* = \lfloor n(1 - \frac{1}{\lambda}) \rfloor\right)
+	&= \sum_{k=1}^{n^*} {n \choose k} n^{\frac{-\lambda}{n}(n-k)k} + \sum_{k=n^* + 1}^{\lfloor n/2 \rfloor} {n \choose k} n^{\frac{-\lambda}{n}(n-k)k}\\
+	&\left(\text{Choose } n^* s.t. \frac{\lambda(n - n^*)}{n}>\frac{1 + \lambda}{2} \iff n^* = \lfloor \frac{n}{2}(1 - \frac{1}{\lambda}) \rfloor\right)
 \end{align*}
 For the first term, 
 \begin{align*}
@@ -138,7 +139,7 @@ For the first term,
 	&= \left(\sum_{k=0}^{n^*} r^k\right) - 1\\
 	&= \frac{r}{1-r} \qquad \left(\text{geometric series. } r < 1 \text{ since } 1 - \frac{\lambda}{n}(n-n^*) < 0\right)\\
 	&= \frac{1}{n^{\frac{\lambda}{n}(n-n^*) - 1} - 1}\\
-	&\longrightarrow 0 \qquad \left(\text{since } n \rightarrow \infty \text{ and exponent} > 0\right)
+	&\longrightarrow 0 \qquad \left(\text{since } n \rightarrow \infty \text{ and exponent} > \frac{1 + \lambda}{2} - 1 = \frac{\lambda - 1}{2} > 0\right)
 \end{align*}
 For the second term, we use a better bound than before (see homework):
 \begin{align*}
@@ -149,8 +150,8 @@ Thus
 	\sum_{k=n^* + 1}^{\lfloor n/2 \rfloor} {n \choose k} n^{\frac{-\lambda}{n}(n-k)k} 
 	&< \sum_{k=n^* + 1}^{\lfloor n/2 \rfloor} \left(\frac{en}{k}\right)^k n^{\frac{-\lambda(n-k)k}{n}} = \sum_{k=n^* + 1}^{\lfloor n/2 \rfloor} \left[ \frac{en^{1 - \frac{\lambda(n-k)}{n}}}{k}\right]^k\\
 	&\le \sum_{k=n^* + 1}^{\lfloor n/2 \rfloor} \left[ \frac{en^{1-\frac{\lambda (n - \frac{n}{2})}{n}}}{n^* + 1}\right]^k \qquad (\text{bound inner } k \text{  with something from above})\\
-	&= \sum_{k=n^* + 1}^{\lfloor n/2 \rfloor} \left[\frac{en^{1 - \frac{\lambda}{2}}}{n(1 - \frac{1}{\lambda}) + 1}\right]^k \le \sum_{k=n^* + 1}^{\lfloor n/2 \rfloor} \left[\frac{en^{\frac{-\lambda}{2}}}{1 - \frac{1}{\lambda}}\right]^k\\
-	&\le \sum_{k=n^* + 1}^{\lfloor n/2 \rfloor}  r^k \qquad (r = \frac{en^{\frac{-\lambda}{2}}}{1 - \frac{1}{\lambda}}, 0 < r < 1 \text{ for large }n)\\
+	&= \sum_{k=n^* + 1}^{\lfloor n/2 \rfloor} \left[\frac{en^{1 - \frac{\lambda}{2}}}{\frac{n}{2}(1 - \frac{1}{\lambda}) + 1}\right]^k \le \sum_{k=n^* + 1}^{\lfloor n/2 \rfloor} \left[\frac{2en^{\frac{-\lambda}{2}}}{1 - \frac{1}{\lambda}}\right]^k\\
+	&= \sum_{k=n^* + 1}^{\lfloor n/2 \rfloor}  r^k \qquad (r = \frac{2en^{\frac{-\lambda}{2}}}{1 - \frac{1}{\lambda}}, 0 < r < 1 \text{ for large }n)\\
 	&\le \sum_{k=n^* + 1}^{\infty}r^k  = \sum_{k=0}^{\infty}r^k - \sum_{k=0}^{n^*}r^k\\
 	&= \frac{1}{1-r} - \frac{1-r^{n^*+1}}{1-r} \qquad \left(\text{finite geometric series} \sum_{k=0}^{m}r^k = \frac{1-r^{m+1}}{1-r}\right)\\
 	&= \frac{r^{n^* + 1}}{1-r} \longrightarrow 0 \qquad \text{since } n^* \rightarrow \infty.
