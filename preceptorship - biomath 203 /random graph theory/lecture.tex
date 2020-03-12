@@ -179,11 +179,11 @@ We setup a Markov chain as follows:
 \begin{itemize}
 	\item Consider a connected \textbf{weighted graph} with $N$ nodes where each edge connecting nodes $i$ and $j$ has a weight $w_{ij} > 0$ that is symmetric $w_{ij} = w_{ji}$. 
 	\item Let each node of a graph be a state in a Markov chain. 
-	\item For node $i$, the probability of jumping to an adjacent node $j$ is $p_{ij} = \frac{a_{ij}}{a_{i\cdot}}$ where $a_{i\cdot} = \sum_{j} a_{ij}.$ Hence large $w_{ij}$ values means easier communication through the edge. 
+	\item For node $i$, the probability of jumping to an adjacent node $j$ is $p_{ij} = \frac{w_{ij}}{\sum_{j} w_{ij}}$. Hence large $w_{ij}$ values means easier communication through the edge. 
 	\item Connectivity implies the Markov chain is irreducible. 
 \end{itemize}
 
-\noindent Based on this Markov chain, we define 2 important quantities: 
+\noindent Intuitively, we can visualize this Markov chain as a random walk on a graph. Based on this Markov chain, we define 2 important quantities: 
 
 \begin{itemize}
 	\item Starting at state $i$, the \textbf{average first passage time} \begin{align}\label{eq:m}		
@@ -202,7 +202,7 @@ We setup a Markov chain as follows:
 
 \noindent $\sqrt{n(i, j)}$ is called the \textbf{Euclidean Commute Time (ETC) Distance}. Intuitively, $n(i, j)$ decreases when 2 nodes are highly connected, or when the length of any path decrease. The fact that it takes "connectivity" between nodes into account sets it apart from  shortest path distances.
 
-\subsection{Computation of Euclidean Commute Time (ETC) Distance}
+\subsection{Computation of Euclidean Commute Time (ECT) Distance}
 
 \subsubsection{Closed form solution involving pseudoinverse}
 
@@ -281,7 +281,7 @@ Now assume $m_{ik}^{(n-1)} \ge m_{ik}^{(n-2)}$, we want to show $m_{ik}^{(n)} \g
 \begin{align*}
 	m_{ik}^{(n)} = 1 + \sum_{j\neq i}^{N} p_{ij} m_{jk}^{(n - 1)} \geq  1 + \sum_{j\neq i}^{N} p_{ij} m_{jk}^{(n-2)} = 	m_{ik}^{(n - 1)}.
 \end{align*}
-To show the sequence is upper bounded, suppose $\bM = (m_{ij})$ solves the system of equations such that $m_{ik} \ge m_{ik}^{(n - 1)}.$ Then again by induction, we have
+To show the sequence is upper bounded, suppose $\bM = (m_{ij})$ exists such that $m_{ik} \ge m_{ik}^{(n - 1)}.$ Then again by induction, we have
 \begin{align*}
 	m_{ik} = 1 + \sum_{j \neq i}^{N}p_{ij}m_{jk} \ge 1 + \sum_{j\neq i}^N p_{ij} m_{jk}^{(n-1)} = m_{ik}^{(n)}.
 \end{align*}
@@ -299,12 +299,12 @@ To show the sequence is upper bounded, suppose $\bM = (m_{ij})$ solves the syste
 The monotone convergence theorem again implies that $m_{ij}^{(n)}$ converges to $E(T_{ij})$ given the later is finite. 
 \end{proof}
 
-\subsection{Revised k-means clustering using ETC Distance}
+\subsection{Revised k-means clustering using ECT Distance}
 
 \begin{enumerate}
 	\item Connect each node to its $h$ nearest neighbors, then add the edges of a minimum spanning tree. Then add weights $w_{ij}$ using your favorite method (e.g. inverse Euclidean distance). 
 	\item Choose number of clusters $k$ and its respective cluster centers $\bp_1,...,\bp_k$ where each $\bp_i$ is a node.
-	\item Assign each node $\bx_i$ to the nearest cluster $C_l$ by finding which of $\bp_1,...,\bp_k$ is closest to $\bx_i$, where closeness is measured as a function of the ETC distance: $\dist(\bx_i, \bp_j) = n(i, j)^2$ 
+	\item Assign each node $\bx_i$ to the nearest cluster $C_l$ by finding which of $\bp_1,...,\bp_k$ is closest to $\bx_i$, where closeness is measured as a function of the ECT distance: $\dist(\bx_i, \bp_j) = n(i, j)^2$ 
 	\item Recompute new cluster centers $\bp_1,...,\bp_k$ by minimizing the within-cluster distance:
 	\begin{align*}
 		\bp_l = \argmin_{\bx_j} \left\{ \sum_{\bx_k \in C_l}n(k, j)^2 \right\}
@@ -328,7 +328,7 @@ It is well known that K-means algorithm assumes Gaussian clusters with the same 
     \caption{Two non-convex clusters.}
 \end{figure}
 
-Below compares scalability of the k-means, k-means using closed form pseudoinverse of ETC distance (kmeans-etc), and k-means using the iterative algorithm to estimate ETC distance (kmeans-etc (fast)). One should not take it too seriously because I did not try very hard to optimize this code. 
+Below compares scalability of the k-means, k-means using closed form pseudoinverse of ECT distance (kmeans-etc), and k-means using the iterative algorithm to estimate ECT distance (kmeans-etc (fast)). One should not take it too seriously because I did not try very hard to optimize this code. 
 
 \begin{figure}[H]
   \begin{subfigure}[b]{0.45\textwidth}
