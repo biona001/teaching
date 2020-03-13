@@ -146,10 +146,10 @@ the system of equations
 m_{ij} & = & 1 + \sum_{k}p_{ik}m_{kj}
 \end{eqnarray*}
 for all $j\ne i$. It is natural to solve this equation iteratively via the recurrence
-\begin{eqnarray*}
-\bM^{(n+1)} & = & \bP\bM^{(n)} + {\bf 1} \\
-\diag(\bM^{(n+1}) & = & {\bf 0}
-\end{eqnarray*}
+\begin{eqnarray}
+\bM^{(n+1)} & = & \bP\bM^{(n)} + {\bf 1} {\bf 1}^t \label{mean_recur}\\
+\diag(\bM^{(n+1}) & = & {\bf 0} \nonumber 
+\end{eqnarray}
 starting from $\bM^{(0)}={\bf 0}$. This recurrence has several
 advantages: (a) it exploits fast matrix times matrix multiplication,
 (b) it correctly maintains the diagonal entries, (c) it is monotonic in the sense that $\bM^{(n+1)} \ge \bM^{(n)}$ for all $n$, and (d) it converges to the minimal solution of the equations. Monotonicity follows by induction from the form of the updates and the
@@ -161,25 +161,58 @@ The iterate $m_{ij}^{(n)}$ equals $\E(T_{ij}1_{\{T_{ij}\le n\}})$
 and converges to $\E(T_{ij})$ whenever the latter is finite.
 \end{proposition}
 \begin{proof}
-This identification is clearly true for $n=0$. Suppose $n>0$ and $T_{kj}'$ is a probabilistic replicate of $T_{kj}$. If $X_1$ denotes the state of the
-chain after one step starting at $X_0=i$, then
+This identification is clearly true for $n=0$. Suppose $n>0$ and $X_1$ denotes the state of the chain after one step starting at $X_0=i$. Then 
 \begin{eqnarray*}
 m_{ij}^{(n+1)} & = & \E(T_{ij}1_{\{T_{ij}\le n+1\}}) \\
 & = & \sum_{k} p_{ik} 
 \E(T_{ij}1_{\{T_{ij}\le n+1\}} \mid X_1 = k) \\
 & = & \sum_{k} p_{ik} 
-\E\Big[(T_{kj}'+1)1_{\{T_{kj}'+1\le n+1\}}\Big] \\
-& = & 1+ \sum_{k} p_{ik}\E(T_{kj}'1_{\{T_{kj}'\le n\}})\\
+\E\Big[(T_{kj}+1)1_{\{T_{kj}+1\le n+1\}}\Big] \\
+& = & 1+ \sum_{k} p_{ik}\E(T_{kj}1_{\{T_{kj}\le n\}})\\
 & = & 1+ \sum_{k} p_{ik}m_{kj}^{(n)}
 \end{eqnarray*}
 proves our first claim. The monotone convergence theorem implies that 
-$m_{ij}^{(n)}$ converges to $\E(T_{ij})$ given the later is finite.
+$m_{ij}^{(n)}$ converges to $\E(T_{ij})$ whenever the later is finite.
 \end{proof} 
+
+To understand the rate of convergence of the iteration scheme (\ref{mean_recur}),
+we first observe that it operates column by column on $\bM$. Thus, we can isolate each
+column and analyze its convergence rate separately. With out loss of generality, we choose column one. For the sake of convenience, we now decompose $\bP$ into the block matrix 
+\begin{eqnarray*}
+\bP & = & \begin{pmatrix} 0 & \ba \\
+\bb & \bQ \end{pmatrix}.
+\end{eqnarray*}
+If we let $\bm_1$ denote the first column of $\bM$ minus its top
+entry, then our recurrence for $\bm_1$ takes the form
+\begin{eqnarray}
+\bm_1^{(n+1)} & = & {\bf 1} + \bQ \bm_1^{(n)} \label{col_recur}
+\end{eqnarray} 
+with $\bm_1 = {\bf 0}$.
+\begin{proposition}
+Suppose $\bP$ is irreducible. In the notation just established, 
+the map $f(\bm) = {\bf 1} + \bQ \bm$ is a contraction for some
+norm with contraction constant $\rho <1$. Hence, the iterates (\ref{col_recur})
+converge at a linear rate to the corresponding vector of mean first passage times. 
+\end{proposition}
+\begin{proof} The matrix $\bI-\bQ$ is diagonally dominant because the row sums
+of $\bP$ equal 1. At least one row sum of $\bQ$ is strictly less than 1 since
+otherwise $\bP$ is reducible. Hence, $\bI-\bQ$ is irreducibly diagonally dominant, and
+Theorem 6.2.6 of \cite{ortega90} implies that $\bI-\bQ$ is nonsingular. Theorem
+6.2.9 of \cite{ortega90} in turn implies that $\bQ$ has dominant eigenvalue $\omega<1$.
+For given $\epsilon>0$, Theorem 1.3.6 of \cite{ortega90} implies that there exists a 
+vector norm $\|\bx\|$ with induced matrix norm satisfying $\|\bQ\| \le \omega+\epsilon$. Taking $\rho = \omega + \epsilon < 1$ gives
+\begin{eqnarray*}
+\|f(\bm)-f(\bn)\| & \le & \|\bQ\| \cdot \|\bm-\bn\| \amp = \amp \rho\|\bm-\bn\|. 
+\end{eqnarray*}
+It follows that $f(\bm)$ is a contraction.  Finally, an appeal to the classical contraction theorem mapping theorem (Theorem 8.2.2 of \cite{ortega90}) yields convergence at the linear rate $\rho$. 
+\end{proof}
 
 
 \begin{thebibliography}{99}
 \bibitem{langeapplied2010}
 Lange, K (2010) {\it Applied Probability}, 2nd ed. Springer
+\bibitem{ortega90}
+Ortega JM (1990) {\it Numerical Analysis: A Second Course}. SIAM
 \end{thebibliography}
 
 \end{document}
