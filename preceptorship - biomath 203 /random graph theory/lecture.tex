@@ -137,7 +137,7 @@ For the first term,
 	&\le \sum_{k=1}^{n^*} \left[ n^{1 - \frac{\lambda}{n}(n-n^*)} \right]^k \qquad \left(\text{judiciously bound inner } k \text{ with something bigger}\right)\\
 	&= \sum_{k=1}^{n^*} r^k \qquad \left(\text{define } r = n^{1 - \frac{\lambda}{n}(n-n^*)}\right)\\
 	&= \left(\sum_{k=0}^{n^*} r^k\right) - 1\\
-	&= \frac{r}{1-r} \qquad \left(\text{geometric series. } r < 1 \text{ since } 1 - \frac{\lambda}{n}(n-n^*) < 0\right)\\
+	&= \frac{r}{1-r} \qquad \left(\text{geometric series. } r < 1 \text{ since exponent } = 1 - \frac{\lambda}{n}(n - n^*) < \frac{1 - \lambda}{2} < 0\right)\\
 	&= \frac{1}{n^{\frac{\lambda}{n}(n-n^*) - 1} - 1}\\
 	&\longrightarrow 0 \qquad \left(\text{since } n \rightarrow \infty \text{ and exponent} > \frac{1 + \lambda}{2} - 1 = \frac{\lambda - 1}{2} > 0\right)
 \end{align*}
