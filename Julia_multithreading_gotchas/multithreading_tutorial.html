@@ -13854,7 +13854,7 @@ M226.232 1423.18 L2352.76 1423.18 L2352.76 123.472 L226.232 123.472  Z
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Gotcha-5:-Memory-Allocation-doesn't-(usually)-matter-for-linear-problems">Gotcha 5: Memory Allocation doesn't (usually) matter for linear problems<a class="anchor-link" href="#Gotcha-5:-Memory-Allocation-doesn't-(usually)-matter-for-linear-problems">&#182;</a></h2><p>Chris Rackauckas explained in his <a href="https://github.com/mitmath/18337">parallel computing course</a> that micro-allocations (i.e. optimize for memory and allocations) only matter for $\mathcal{O}(n)$ problems. <strong>In Julia this is only true for serial code!!</strong></p>
+<h2 id="Gotcha-5:-Memory-Allocation-Really-Does-Matter">Gotcha 5: Memory Allocation Really Does Matter<a class="anchor-link" href="#Gotcha-5:-Memory-Allocation-Really-Does-Matter">&#182;</a></h2><p>Chris Rackauckas explained in his <a href="https://github.com/mitmath/18337">parallel computing course</a> that micro-allocations (i.e. optimize for memory and allocations) only matter for $\mathcal{O}(n)$ problems. <strong>In Julia this is only true for serial code!!</strong></p>
 <p>The example code below is from <a href="https://mitmath.github.io/18337/lecture2/optimizing">https://mitmath.github.io/18337/lecture2/optimizing</a></p>
 
 </div>
