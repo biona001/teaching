@@ -11860,8 +11860,8 @@ div#notebook {
 
 <div class="output_area"><div class="prompt"></div>
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>unsafe_sum(x) = 6419.710605861014
-unsafe_sum(x) = 7549.242253314164
+<pre>unsafe_sum(x) = 6480.314357976653
+unsafe_sum(x) = 6678.282528482031
 </pre>
 </div>
 </div>
@@ -11910,8 +11910,8 @@ unsafe_sum(x) = 7549.242253314164
 
 <div class="output_area"><div class="prompt"></div>
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>debug_unsafe_sum(x) = 49938.497845646096
-debug_unsafe_sum(x) = 49938.49784564645
+<pre>debug_unsafe_sum(x) = 49938.497845646365
+debug_unsafe_sum(x) = 49938.497845646205
 </pre>
 </div>
 </div>
@@ -12028,7 +12028,7 @@ safe_sum(x) = 49938.49784564629
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[7]:</div>
+<div class="prompt input_prompt">In&nbsp;[12]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="c"># see post https://discourse.julialang.org/t/editing-an-array-with-multiple-threads/25364/9</span>
@@ -12043,7 +12043,7 @@ safe_sum(x) = 49938.49784564629
         <span class="n">s</span><span class="p">[</span><span class="n">Threads</span><span class="o">.</span><span class="n">threadid</span><span class="p">()</span><span class="o">*</span><span class="n">spacing</span><span class="p">]</span> <span class="o">+=</span> <span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
         <span class="n">c</span><span class="p">[</span><span class="n">Threads</span><span class="o">.</span><span class="n">threadid</span><span class="p">()</span><span class="o">*</span><span class="n">spacing</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
     <span class="k">end</span>
-    <span class="k">return</span> <span class="n">sum</span><span class="p">(</span><span class="n">s</span><span class="p">),</span> <span class="n">c</span>
+    <span class="k">return</span> <span class="n">sum</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
 <span class="k">end</span>
 
 <span class="p">@</span><span class="n">btime</span> <span class="n">f</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
@@ -12060,8 +12060,8 @@ safe_sum(x) = 49938.49784564629
 
 <div class="output_area"><div class="prompt"></div>
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>  17.791 ms (45 allocations: 7.64 MiB)
-  1.212 ms (45 allocations: 7.64 MiB)
+<pre>  17.349 ms (45 allocations: 7.64 MiB)
+  1.237 ms (45 allocations: 7.64 MiB)
 </pre>
 </div>
 </div>
@@ -12097,7 +12097,7 @@ safe_sum(x) = 49938.49784564629
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[8]:</div>
+<div class="prompt input_prompt">In&nbsp;[4]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="c"># Performs C[i] = A[i] * B[i] where A[i], B[i], C[i] are matrices</span>
@@ -12133,8 +12133,8 @@ safe_sum(x) = 49938.49784564629
 
 <div class="output_area"><div class="prompt"></div>
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>  3.539 ms (41 allocations: 5.53 KiB)
-  807.662 μs (40 allocations: 5.50 KiB)
+<pre>  3.040 ms (41 allocations: 5.53 KiB)
+  704.270 μs (41 allocations: 5.53 KiB)
 </pre>
 </div>
 </div>
@@ -12149,6 +12149,156 @@ safe_sum(x) = 49938.49784564629
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p><strong>Conclusion:</strong> If you forgot to change BLAS threads (8 by default), your for loop is automatically <strong>4 times</strong> slower!</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Test-oversubscription-on-Intel-i9-CPUs">Test oversubscription on Intel i9 CPUs<a class="anchor-link" href="#Test-oversubscription-on-Intel-i9-CPUs">&#182;</a></h3><p>From what I heard, Intel's 9th generation hardware supports 2 threads/core seamlessly. So what happens if we use 16 threads on an i9 CPU with only 8 cores?</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[5]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-julia"><pre><span></span><span class="n">versioninfo</span><span class="p">()</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area"><div class="prompt"></div>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Julia Version 1.5.0
+Commit 96786e22cc (2020-08-01 23:44 UTC)
+Platform Info:
+  OS: macOS (x86_64-apple-darwin18.7.0)
+  CPU: Intel(R) Core(TM) i9-9880H CPU @ 2.30GHz
+  WORD_SIZE: 64
+  LIBM: libopenlibm
+  LLVM: libLLVM-9.0.1 (ORCJIT, skylake)
+Environment:
+  JULIA_NUM_THREADS = 16
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[4]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-julia"><pre><span></span><span class="c"># 16 Julia threads, 1 BLAS thread</span>
+<span class="n">BLAS</span><span class="o">.</span><span class="n">set_num_threads</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="p">@</span><span class="n">btime</span> <span class="n">test_multiply!</span><span class="p">(</span><span class="o">$</span><span class="n">C</span><span class="p">,</span> <span class="o">$</span><span class="n">A</span><span class="p">,</span> <span class="o">$</span><span class="n">B</span><span class="p">)</span> <span class="n">seconds</span><span class="o">=</span><span class="mi">30</span><span class="p">;</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area"><div class="prompt"></div>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>  714.116 μs (81 allocations: 10.97 KiB)
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[5]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-julia"><pre><span></span><span class="n">versioninfo</span><span class="p">()</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area"><div class="prompt"></div>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Julia Version 1.5.0
+Commit 96786e22cc (2020-08-01 23:44 UTC)
+Platform Info:
+  OS: macOS (x86_64-apple-darwin18.7.0)
+  CPU: Intel(R) Core(TM) i9-9880H CPU @ 2.30GHz
+  WORD_SIZE: 64
+  LIBM: libopenlibm
+  LLVM: libLLVM-9.0.1 (ORCJIT, skylake)
+Environment:
+  JULIA_NUM_THREADS = 8
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[6]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-julia"><pre><span></span><span class="c"># 8 Julia threads, 1 BLAS thread</span>
+<span class="n">BLAS</span><span class="o">.</span><span class="n">set_num_threads</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="p">@</span><span class="n">btime</span> <span class="n">test_multiply!</span><span class="p">(</span><span class="o">$</span><span class="n">C</span><span class="p">,</span> <span class="o">$</span><span class="n">A</span><span class="p">,</span> <span class="o">$</span><span class="n">B</span><span class="p">)</span> <span class="n">seconds</span><span class="o">=</span><span class="mi">30</span><span class="p">;</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area"><div class="prompt"></div>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>  717.031 μs (40 allocations: 5.50 KiB)
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Conclusion:</strong> For matrix multiplication, using 2x number of threads than physical cores <em>does not</em> hurt, but it is also not faster.</p>
 
 </div>
 </div>
